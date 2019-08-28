@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>920</width>
-    <height>599</height>
+    <width>980</width>
+    <height>638</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider">
+         <widget class="QSlider" name="m_bkg_value_thres">
           <property name="value">
            <number>25</number>
           </property>
@@ -62,12 +62,15 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>TextLabel</string>
+           <string>% of pixels to sample</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QSlider" name="horizontalSlider_2">
+         <widget class="QSlider" name="m_pixels_sample">
+          <property name="value">
+           <number>5</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -108,7 +111,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBox">
+         <widget class="QCheckBox" name="m_bkg_white">
           <property name="text">
            <string>Make background white</string>
           </property>
@@ -142,6 +145,16 @@
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="m_log_window">
+        <property name="acceptDrops">
+         <bool>false</bool>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(226, 226, 226);</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
