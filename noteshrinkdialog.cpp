@@ -65,6 +65,9 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
     cmd += " -p ";
     cmd += QString::number(ui->m_pixels_sample->value());
 
+    cmd += " -n ";
+    cmd += QString::number(ui->m_num_colors->value());
+
     if (ui->m_bkg_white->isChecked()) {
         cmd += " -w ";
     }
