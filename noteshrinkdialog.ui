@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>GroupBox</string>
+      <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
@@ -38,12 +38,15 @@
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Background value threshold %</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider">
+          <property name="value">
+           <number>25</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -85,7 +88,17 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBox"/>
+         <widget class="QSpinBox" name="spinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>256</number>
+          </property>
+          <property name="value">
+           <number>8</number>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="Line" name="line_3">
@@ -122,9 +135,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QDialogButtonBox" name="buttonBox_2">
+         <widget class="QDialogButtonBox" name="m_params_button_box">
           <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+           <set>QDialogButtonBox::Apply|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
           </property>
          </widget>
         </item>
@@ -139,8 +152,23 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
          <property name="text">
-          <string>TextLabel</string>
+          <string>No image</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -157,7 +185,10 @@
        <item>
         <widget class="QDialogButtonBox" name="buttonBox">
          <property name="standardButtons">
-          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          <set>QDialogButtonBox::Open</set>
+         </property>
+         <property name="centerButtons">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
