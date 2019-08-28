@@ -40,6 +40,7 @@ void NoteshrinkDialog::on_m_preview_button_box_clicked(QAbstractButton *button)
            // copy src to tmp for initial preview
            if (QFile::copy(m_preview_image_src_path, m_preview_image_tmp_path)) {
                update_preview_image();
+               ui->m_preview_image_label->setText(m_preview_image_src_path);
            } else {
                QMessageBox::critical(nullptr, "Error", "Cannot create temporary file");
            }
@@ -66,6 +67,10 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
 
     if (ui->m_bkg_white->isChecked()) {
         cmd += " -w ";
+    }
+
+    if (ui->m_global_palette->isChecked()) {
+        cmd += " -g ";
     }
 
     cmd += " -c \"/bin/true\" ";

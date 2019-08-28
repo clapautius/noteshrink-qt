@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>980</width>
-    <height>638</height>
+    <width>992</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -118,7 +118,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="checkBox_2">
+         <widget class="QCheckBox" name="m_global_palette">
           <property name="text">
            <string>Use global palette</string>
           </property>
@@ -147,13 +147,25 @@
        </layout>
       </item>
       <item>
-       <widget class="QPlainTextEdit" name="m_log_window">
-        <property name="acceptDrops">
-         <bool>false</bool>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>Log window</string>
         </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(226, 226, 226);</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_13">
+         <item>
+          <widget class="QPlainTextEdit" name="m_log_window">
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(226, 226, 226);</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_12"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -164,18 +176,21 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="m_preview_image_label">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="styleSheet">
+          <string notr="true">font-weight: bold;</string>
+         </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::NoFrame</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Plain</enum>
          </property>
          <property name="text">
           <string>No image</string>
