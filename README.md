@@ -1,4 +1,4 @@
-GUI for noteshrink.py
+GUI for noteshrink.py ( https://github.com/mzucker/noteshrink ).
 
 Screenshot:
 
