@@ -125,6 +125,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="m_do_not_saturate">
+          <property name="text">
+           <string>Do not saturate colors</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>

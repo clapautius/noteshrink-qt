@@ -73,6 +73,10 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
         cmd += " -g ";
     }
 
+    if (ui->m_do_not_saturate->isChecked()) {
+        cmd += " -S ";
+    }
+
     cmd += " -c \"/bin/true\" ";
 
     cmd += m_preview_image_src_path;
