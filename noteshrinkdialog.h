@@ -1,6 +1,8 @@
 #ifndef NOTESHRINKDIALOG_H
 #define NOTESHRINKDIALOG_H
 
+#include <vector>
+
 #include <QDialog>
 #include <QAbstractButton>
 #include <QFile>
@@ -32,6 +34,10 @@ private:
 
     bool run_noteshrink_cmd();
 
+    void enable_inputs();
+
+    void disable_inputs();
+
     Ui::NoteshrinkDialog *ui;
 
     QString m_preview_image_src_path;
@@ -42,6 +48,8 @@ private:
     QImage m_preview_image;
 
     QStringListModel *m_preview_files_model;
+
+    std::vector<QWidget*> m_inputs;
 };
 
 #endif // NOTESHRINKDIALOG_H

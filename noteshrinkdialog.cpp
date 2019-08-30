@@ -20,6 +20,15 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     // setup buttons
     QPushButton *button = ui->m_params_button_box->button(QDialogButtonBox::Apply);
     button->setText("Preview");
+    button = ui->m_params_button_box->button(QDialogButtonBox::Ok);
+    button->setText("Run");
+
+    // put all input controls in a vector
+    // :fixme: get rid of the old-style cast
+    for (QWidget *w : {(QWidget*)ui->m_params_button_box, (QWidget*)ui->m_bkg_value_thres,
+                       (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors }) {
+        m_inputs.push_back(w);
+    }
 }
 
 NoteshrinkDialog::~NoteshrinkDialog()
@@ -42,6 +51,8 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
     bool rc = false;
     bool postprocess = false;
     QString cmd = "noteshrink.py ";
+
+    disable_inputs();
 
     cmd += "-v ";
     int i = ui->m_bkg_value_thres->value();
@@ -87,6 +98,7 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
     ui->m_log_window->appendPlainText("Running command:");
     ui->m_log_window->appendPlainText(cmd);
 
+    QCoreApplication::processEvents();
     if (QProcess::execute(cmd) == 0) {
         update_preview_image();
         ui->m_log_window->appendPlainText("Done");
@@ -114,12 +126,14 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
         QMessageBox::critical(nullptr, "Error", "Error executing noteshrink");
     }
     ui->m_log_window->appendPlainText("");
+    enable_inputs();
     return rc;
 }
 
 
 void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
 {
+    // this is the Preview button
     if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Apply)) {
         if (run_noteshrink_cmd()) {
             update_preview_image();
@@ -160,4 +174,18 @@ void NoteshrinkDialog::on_m_pixels_sample_valueChanged(int value)
 {
     ui->m_pixels_sample_label->setText(QString("% of pixels to sample: ") +
                                        QString::number(value));
+}
+
+
+void NoteshrinkDialog::enable_inputs()
+{
+    for_each(m_inputs.begin(), m_inputs.end(),
+             [] (QWidget *w) { w->setEnabled(true); });
+}
+
+
+void NoteshrinkDialog::disable_inputs()
+{
+    for_each(m_inputs.begin(), m_inputs.end(),
+             [] (QWidget *w) { w->setEnabled(false); });
 }
