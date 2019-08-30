@@ -34,7 +34,9 @@ private:
 
     void update_preview_image();
 
-    bool run_noteshrink_cmd();
+    bool run_noteshrink_preview_cmd();
+
+    bool run_noteshrink_full_cmd();
 
     void enable_inputs();
 

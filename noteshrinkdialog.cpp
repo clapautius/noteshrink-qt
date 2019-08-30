@@ -46,7 +46,7 @@ void NoteshrinkDialog::update_preview_image()
 }
 
 
-bool NoteshrinkDialog::run_noteshrink_cmd()
+bool NoteshrinkDialog::run_noteshrink_preview_cmd()
 {
     bool rc = false;
     bool postprocess = false;
@@ -94,27 +94,25 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
 
     cmd += m_preview_image_src_path;
 
-    //QMessageBox::information(nullptr, "Command", cmd);
-    ui->m_log_window->appendPlainText("Running command:");
-    ui->m_log_window->appendPlainText(cmd);
+    ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
+    ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     QCoreApplication::processEvents();
     if (QProcess::execute(cmd) == 0) {
         update_preview_image();
-        ui->m_log_window->appendPlainText("Done");
+        ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
 
         // :fixme: check results
         if (postprocess) {
-            ui->m_log_window->appendPlainText("Renaming postproc file");
             bool cc = true;
             if (!QFile::remove(m_preview_image_tmp_path)) {
                 ui->m_log_window->appendPlainText("Remove error");
                 cc = false;
             }
             if (cc && QFile::rename(m_preview_image_pp_tmp_path, m_preview_image_tmp_path)) {
-                ui->m_log_window->appendPlainText("Rename OK");
+                ui->m_log_window->appendPlainText("Postproc file renamed");
             } else {
-                ui->m_log_window->appendPlainText("Rename error");
+                ui->m_log_window->appendPlainText("Error renaming postproc file");
                 cc = false;
             }
         }
@@ -131,11 +129,70 @@ bool NoteshrinkDialog::run_noteshrink_cmd()
 }
 
 
+// :fixme: - remove duplicated code
+bool NoteshrinkDialog::run_noteshrink_full_cmd()
+{
+    bool rc = false;
+    QString cmd = "noteshrink.py ";
+
+    disable_inputs();
+
+    cmd += "-v ";
+    int i = ui->m_bkg_value_thres->value();
+    cmd += QString::number(i);
+
+    cmd += " -p ";
+    cmd += QString::number(ui->m_pixels_sample->value());
+
+    cmd += " -n ";
+    cmd += QString::number(ui->m_num_colors->value());
+
+    if (ui->m_bkg_white->isChecked()) {
+        cmd += " -w ";
+    }
+
+    if (ui->m_global_palette->isChecked()) {
+        cmd += " -g ";
+    }
+
+    if (ui->m_do_not_saturate->isChecked()) {
+        cmd += " -S ";
+    }
+
+    if (ui->m_use_pngcrush->isChecked()) {
+        cmd += " -C ";
+    }
+
+    if (ui->m_use_pngquant->isChecked()) {
+        cmd += " -Q ";
+    }
+
+    for(auto &f : m_input_files) {
+        cmd += " ";
+        cmd += f;
+    }
+
+    ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
+    ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
+
+    QCoreApplication::processEvents();
+    if (QProcess::execute(cmd) == 0) {
+        ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
+        rc = true;
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Error executing noteshrink");
+    }
+    ui->m_log_window->appendPlainText("");
+    enable_inputs();
+    return rc;
+}
+
+
 void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
 {
     // this is the Preview button
     if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Apply)) {
-        if (run_noteshrink_cmd()) {
+        if (run_noteshrink_preview_cmd()) {
             update_preview_image();
         } else {
             QMessageBox::critical(nullptr, "Error", "noteshrink.py error");
@@ -151,7 +208,9 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
        set_preview_image(m_input_files[0]);
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
         // this is the 'Run' button
-        QMessageBox::critical(nullptr, "Error", "Not implemented yet");
+        //QMessageBox::critical(nullptr, "Error", "Not implemented yet");
+        run_noteshrink_full_cmd(); // :fixme: check for errors
+
     } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
         set_default_values();
     }
