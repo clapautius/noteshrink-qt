@@ -42,6 +42,8 @@ private:
 
     bool set_preview_image(QString &img_path);
 
+    void set_default_values();
+
     Ui::NoteshrinkDialog *ui;
 
     QString m_preview_image_src_path;

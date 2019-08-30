@@ -152,6 +152,8 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
         // this is the 'Run' button
         QMessageBox::critical(nullptr, "Error", "Not implemented yet");
+    } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
+        set_default_values();
     }
 }
 
@@ -208,4 +210,17 @@ void NoteshrinkDialog::on_m_preview_files_clicked(const QModelIndex &index)
 {
     QString item_text = index.data(Qt::DisplayRole).toString();
     set_preview_image(item_text);
+}
+
+
+void NoteshrinkDialog::set_default_values()
+{
+    ui->m_bkg_value_thres->setValue(25);
+    ui->m_pixels_sample->setValue(5);
+    ui->m_num_colors->setValue(8);
+    ui->m_bkg_white->setChecked(false);
+    ui->m_global_palette->setChecked(false);
+    ui->m_do_not_saturate->setChecked(false);
+    ui->m_use_pngcrush->setChecked(false);
+    ui->m_use_pngquant->setChecked(false);
 }
