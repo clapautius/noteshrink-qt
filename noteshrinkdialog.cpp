@@ -140,29 +140,43 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
         } else {
             QMessageBox::critical(nullptr, "Error", "noteshrink.py error");
         }
-    }
-    if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Open) ) {
-       //QMessageBox::information(nullptr, "Opening preview image", "Opening preview image");
-       m_preview_image_src_path = QFileDialog::getOpenFileName(nullptr, "Select image");
-       if (QFile::exists(m_preview_image_tmp_path)) {
-           QFile::remove(m_preview_image_tmp_path);
+    } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Open) ) {
+       m_input_files = QFileDialog::getOpenFileNames(nullptr, "Select images");
+       if (m_input_files.empty()) {
+           return; // :fixme: proper cleanup
        }
-
-       if (!m_preview_image_src_path.isNull()) {
-           // copy src to tmp for initial preview
-           if (QFile::copy(m_preview_image_src_path, m_preview_image_tmp_path)) {
-               update_preview_image();
-
-               // populate file list
-               QStringList list;
-               list << m_preview_image_src_path;
-               m_preview_files_model->setStringList(list);
-           } else {
-               QMessageBox::critical(nullptr, "Error", "Cannot create temporary file");
-           }
-       }
+       // populate file list
+       m_preview_files_model->setStringList(m_input_files);
+       // preview first image (:fixme: also select it)
+       set_preview_image(m_input_files[0]);
+    } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
+        // this is the 'Run' button
+        QMessageBox::critical(nullptr, "Error", "Not implemented yet");
     }
 }
+
+
+bool NoteshrinkDialog::set_preview_image(QString &img_path)
+{
+    bool rc = true;
+    m_preview_image_src_path = img_path;
+    if (QFile::exists(m_preview_image_tmp_path)) {
+        QFile::remove(m_preview_image_tmp_path);
+    }
+
+    if (!m_preview_image_src_path.isNull()) {
+        // copy src to tmp for initial preview
+        if (QFile::copy(m_preview_image_src_path, m_preview_image_tmp_path)) {
+            update_preview_image();
+
+        } else {
+            QMessageBox::critical(nullptr, "Error", "Cannot create temporary file");
+            rc = false;
+        }
+    }
+    return rc;
+}
+
 
 void NoteshrinkDialog::on_m_bkg_value_thres_valueChanged(int value)
 {
@@ -188,4 +202,10 @@ void NoteshrinkDialog::disable_inputs()
 {
     for_each(m_inputs.begin(), m_inputs.end(),
              [] (QWidget *w) { w->setEnabled(false); });
+}
+
+void NoteshrinkDialog::on_m_preview_files_clicked(const QModelIndex &index)
+{
+    QString item_text = index.data(Qt::DisplayRole).toString();
+    set_preview_image(item_text);
 }

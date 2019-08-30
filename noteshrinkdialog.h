@@ -28,6 +28,8 @@ private slots:
 
     void on_m_pixels_sample_valueChanged(int value);
 
+    void on_m_preview_files_clicked(const QModelIndex &index);
+
 private:
 
     void update_preview_image();
@@ -37,6 +39,8 @@ private:
     void enable_inputs();
 
     void disable_inputs();
+
+    bool set_preview_image(QString &img_path);
 
     Ui::NoteshrinkDialog *ui;
 
@@ -50,6 +54,8 @@ private:
     QStringListModel *m_preview_files_model;
 
     std::vector<QWidget*> m_inputs;
+
+    QStringList m_input_files;
 };
 
 #endif // NOTESHRINKDIALOG_H
