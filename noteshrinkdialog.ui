@@ -36,9 +36,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QLabel" name="m_bkg_value_thres_label">
           <property name="text">
-           <string>Background value threshold %</string>
+           <string>Background value threshold %: 25</string>
           </property>
          </widget>
         </item>
@@ -50,6 +50,12 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksBelow</enum>
+          </property>
+          <property name="tickInterval">
+           <number>10</number>
+          </property>
          </widget>
         </item>
         <item>
@@ -60,9 +66,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_3">
+         <widget class="QLabel" name="m_pixels_sample_label">
           <property name="text">
-           <string>% of pixels to sample</string>
+           <string>% of pixels to sample: 5</string>
           </property>
          </widget>
         </item>
@@ -73,6 +79,12 @@
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksBelow</enum>
+          </property>
+          <property name="tickInterval">
+           <number>10</number>
           </property>
          </widget>
         </item>
@@ -128,6 +140,20 @@
          <widget class="QCheckBox" name="m_do_not_saturate">
           <property name="text">
            <string>Do not saturate colors</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="m_use_pngcrush">
+          <property name="text">
+           <string>Use pngcrush</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="m_use_pngquant">
+          <property name="text">
+           <string>Use pngquant</string>
           </property>
          </widget>
         </item>
@@ -200,7 +226,7 @@
           <enum>QFrame::Plain</enum>
          </property>
          <property name="text">
-          <string>No image</string>
+          <string>Files to process:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
