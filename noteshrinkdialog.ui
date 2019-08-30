@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>992</width>
-    <height>769</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -147,7 +147,7 @@
         <item>
          <widget class="QDialogButtonBox" name="m_params_button_box">
           <property name="standardButtons">
-           <set>QDialogButtonBox::Apply|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+           <set>QDialogButtonBox::Apply|QDialogButtonBox::Ok|QDialogButtonBox::Open|QDialogButtonBox::RestoreDefaults</set>
           </property>
          </widget>
         </item>
@@ -208,6 +208,16 @@
         </widget>
        </item>
        <item>
+        <widget class="QListView" name="m_preview_files">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="m_preview_area">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -217,16 +227,6 @@
          </property>
          <property name="text">
           <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QDialogButtonBox" name="m_preview_button_box">
-         <property name="standardButtons">
-          <set>QDialogButtonBox::Open</set>
-         </property>
-         <property name="centerButtons">
-          <bool>true</bool>
          </property>
         </widget>
        </item>

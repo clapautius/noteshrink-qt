@@ -19,8 +19,6 @@ public:
     ~NoteshrinkDialog();
 
 private slots:
-    void on_m_preview_button_box_clicked(QAbstractButton *button);
-
     void on_m_params_button_box_clicked(QAbstractButton *button);
 
 private:

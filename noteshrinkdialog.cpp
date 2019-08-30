@@ -31,24 +31,6 @@ void NoteshrinkDialog::update_preview_image()
 }
 
 
-void NoteshrinkDialog::on_m_preview_button_box_clicked(QAbstractButton *button)
-{
-    if((QPushButton*)button == ui->m_preview_button_box->button(QDialogButtonBox::Open) ){
-       //QMessageBox::information(nullptr, "Opening preview image", "Opening preview image");
-       m_preview_image_src_path = QFileDialog::getOpenFileName(nullptr, "Select image");
-       if (!m_preview_image_src_path.isNull()) {
-           // copy src to tmp for initial preview
-           if (QFile::copy(m_preview_image_src_path, m_preview_image_tmp_path)) {
-               update_preview_image();
-               ui->m_preview_image_label->setText(m_preview_image_src_path);
-           } else {
-               QMessageBox::critical(nullptr, "Error", "Cannot create temporary file");
-           }
-       }
-    }
-}
-
-
 bool NoteshrinkDialog::run_noteshrink_cmd()
 {
     bool rc = false;
@@ -107,5 +89,18 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
         } else {
             QMessageBox::critical(nullptr, "Error", "noteshrink.py error");
         }
+    }
+    if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Open) ) {
+       //QMessageBox::information(nullptr, "Opening preview image", "Opening preview image");
+       m_preview_image_src_path = QFileDialog::getOpenFileName(nullptr, "Select image");
+       if (!m_preview_image_src_path.isNull()) {
+           // copy src to tmp for initial preview
+           if (QFile::copy(m_preview_image_src_path, m_preview_image_tmp_path)) {
+               update_preview_image();
+               ui->m_preview_image_label->setText(m_preview_image_src_path);
+           } else {
+               QMessageBox::critical(nullptr, "Error", "Cannot create temporary file");
+           }
+       }
     }
 }
