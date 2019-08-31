@@ -11,4 +11,4 @@ Screenshot
 Download
 ========
 
-[Linux AppImage v1](https://github.com/clapautius/noteshrink-qt/releases/download/v1/noteshrink-qt-v1-x86_64.AppImage)
+[noteshrink-qt-v1-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v1/noteshrink-qt-v1-x86_64.AppImage)
