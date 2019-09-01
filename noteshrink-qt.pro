@@ -32,3 +32,17 @@ HEADERS += \
 
 FORMS += \
         noteshrinkdialog.ui
+
+unix {
+    target.path = $$PREFIX/bin
+
+    shortcutfiles.files = resources/noteshrink-qt.desktop
+    shortcutfiles.path = $$PREFIX/share/applications/
+    data.files += resources/noteshrink-qt-icon.png
+    data.path = $$PREFIX/share/pixmaps/
+
+    INSTALLS += shortcutfiles
+    INSTALLS += data
+}
+
+INSTALLS += target
