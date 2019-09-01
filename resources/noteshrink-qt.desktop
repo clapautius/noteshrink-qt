@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=noteshrink-qt app
+Comment=noteshrink-qt app
+Exec=noteshrink-qt
+Icon=noteshrink-qt-icon
+Categories=Utility;
