@@ -22,6 +22,8 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     button->setText("Preview");
     button = ui->m_params_button_box->button(QDialogButtonBox::Ok);
     button->setText("Run");
+    button = ui->m_params_button_box->button(QDialogButtonBox::Help);
+    button->setText("About");
 
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast
@@ -29,6 +31,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
                        (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors }) {
         m_inputs.push_back(w);
     }
+
 }
 
 NoteshrinkDialog::~NoteshrinkDialog()
@@ -213,7 +216,10 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
 
     } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
         set_default_values();
+    } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Help)) {
+        QMessageBox::about(nullptr, "About", QString("noteshrink-qt ver: ") + NOTESHRINK_QT_VER + "\nhttps://github.com/clapautius/noteshrink-qt");
     }
+
 }
 
 

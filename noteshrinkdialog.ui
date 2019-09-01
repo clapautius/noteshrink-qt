@@ -22,21 +22,109 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QGroupBox" name="groupBox_3">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="toolTipDuration">
          <number>-1</number>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: #999;</string>
+         <string notr="true">color: #004040;</string>
         </property>
         <property name="title">
-         <string>Pre-processing (not ready yet)</string>
+         <string/>
         </property>
         <property name="flat">
          <bool>false</bool>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="groupBox_6">
+           <property name="title">
+            <string/>
+           </property>
+           <property name="flat">
+            <bool>true</bool>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="checkBox">
+                <property name="layoutDirection">
+                 <enum>Qt::RightToLeft</enum>
+                </property>
+                <property name="text">
+                 <string>Pre-processing options (WIP)</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
          <item>
           <widget class="QGroupBox" name="groupBox_4">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="toolTip">
             <string/>
            </property>
@@ -66,11 +154,14 @@
              <layout class="QHBoxLayout" name="horizontalLayout_3">
               <item>
                <widget class="QLabel" name="label">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="toolTip">
                  <string/>
                 </property>
                 <property name="text">
-                 <string>Crop (L,R,T,B)</string>
+                 <string>Crop (L,T,R,B)</string>
                 </property>
                </widget>
               </item>
@@ -112,6 +203,9 @@
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox_5">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="title">
             <string/>
            </property>
@@ -135,14 +229,27 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Resize (%)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="text">
+                 <string>Resize (%)</string>
+                </property>
+               </widget>
+              </item>
               <item>
                <widget class="QSpinBox" name="spinBox_5">
                 <property name="enabled">
@@ -150,13 +257,23 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
              </layout>
             </item>
            </layout>
           </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5"/>
          </item>
         </layout>
        </widget>
@@ -237,24 +354,54 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Number of colors</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="m_num_colors">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>256</number>
-          </property>
-          <property name="value">
-           <number>8</number>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Number of colors:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="m_num_colors">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>256</number>
+            </property>
+            <property name="value">
+             <number>8</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="Line" name="line_3">
@@ -314,7 +461,7 @@
         <item>
          <widget class="QDialogButtonBox" name="m_params_button_box">
           <property name="standardButtons">
-           <set>QDialogButtonBox::Apply|QDialogButtonBox::Ok|QDialogButtonBox::Open|QDialogButtonBox::RestoreDefaults</set>
+           <set>QDialogButtonBox::Apply|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Open|QDialogButtonBox::RestoreDefaults</set>
           </property>
          </widget>
         </item>
