@@ -155,7 +155,7 @@
               <item>
                <widget class="QLabel" name="label">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="toolTip">
                  <string notr="true" extracomment="Crop: left x top x right x bottom (pixels)">Crop: left x top x right x bottom (pixels)</string>
