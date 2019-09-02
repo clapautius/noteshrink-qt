@@ -25,9 +25,6 @@
         <property name="enabled">
          <bool>true</bool>
         </property>
-        <property name="toolTipDuration">
-         <number>-1</number>
-        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -159,9 +156,6 @@
                 </property>
                 <property name="toolTip">
                  <string notr="true" extracomment="Crop: left x top x right x bottom (pixels)">Crop: left x top x right x bottom (pixels)</string>
-                </property>
-                <property name="toolTipDuration">
-                 <number>-1</number>
                 </property>
                 <property name="text">
                  <string>Crop (L,T,R,B)</string>
