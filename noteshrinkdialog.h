@@ -32,13 +32,21 @@ private slots:
 
     void on_m_preview_files_clicked(const QModelIndex &index);
 
+    void on_m_preproc_check_stateChanged(int arg1);
+
 private:
 
     void update_preview_image();
 
-    bool run_noteshrink_preview_cmd();
+    void run_preview();
+
+    bool run_noteshrink_preview_cmd(const QString &src, const QString &dst);
 
     bool run_noteshrink_full_cmd();
+
+    bool run_noteshrink_preproc_preview_cmd(const QString &src, const QString &dst);
+
+    bool run_noteshrink_preproc_full_cmd();
 
     void enable_inputs();
 
@@ -47,6 +55,10 @@ private:
     bool set_preview_image(QString &img_path);
 
     void set_default_values();
+
+    void enable_preproc_inputs();
+
+    void disable_preproc_inputs();
 
     Ui::NoteshrinkDialog *ui;
 
@@ -60,6 +72,8 @@ private:
     QStringListModel *m_preview_files_model;
 
     std::vector<QWidget*> m_inputs;
+
+    std::vector<QWidget*> m_preproc_inputs;
 
     QStringList m_input_files;
 };

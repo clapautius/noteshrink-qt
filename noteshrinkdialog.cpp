@@ -28,8 +28,17 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast
     for (QWidget *w : {(QWidget*)ui->m_params_button_box, (QWidget*)ui->m_bkg_value_thres,
-                       (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors }) {
+                       (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors,
+                       (QWidget*)ui->m_preproc_check}) {
         m_inputs.push_back(w);
+    }
+
+    // put all input controls in a vector
+    // :fixme: get rid of the old-style cast
+    for (QWidget *w : {(QWidget*)ui->m_crop_top, (QWidget*)ui->m_crop_left,
+                       (QWidget*)ui->m_crop_bottom, (QWidget*)ui->m_crop_right,
+                       (QWidget*)ui->m_resize }) {
+        m_preproc_inputs.push_back(w);
     }
 
 }
@@ -49,7 +58,7 @@ void NoteshrinkDialog::update_preview_image()
 }
 
 
-bool NoteshrinkDialog::run_noteshrink_preview_cmd()
+bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QString &dst)
 {
     bool rc = false;
     bool postprocess = false;
@@ -63,7 +72,7 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd()
 
     // output
     cmd += " -b ";
-    cmd += m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8);
+    cmd += dst;
 
     cmd += " -p ";
     cmd += QString::number(ui->m_pixels_sample->value());
@@ -95,7 +104,7 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd()
     }
     cmd += " -c \"/bin/true\" ";
 
-    cmd += m_preview_image_src_path;
+    cmd += src;
 
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
@@ -195,11 +204,7 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
 {
     // this is the Preview button
     if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Apply)) {
-        if (run_noteshrink_preview_cmd()) {
-            update_preview_image();
-        } else {
-            QMessageBox::critical(nullptr, "Error", "noteshrink.py error");
-        }
+        run_preview();
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Open) ) {
        m_input_files = QFileDialog::getOpenFileNames(nullptr, "Select images");
        if (m_input_files.empty()) {
@@ -262,6 +267,9 @@ void NoteshrinkDialog::enable_inputs()
 {
     for_each(m_inputs.begin(), m_inputs.end(),
              [] (QWidget *w) { w->setEnabled(true); });
+    if (ui->m_preproc_check->isChecked()) {
+        enable_preproc_inputs();
+    }
 }
 
 
@@ -269,7 +277,25 @@ void NoteshrinkDialog::disable_inputs()
 {
     for_each(m_inputs.begin(), m_inputs.end(),
              [] (QWidget *w) { w->setEnabled(false); });
+    if (ui->m_preproc_check->isChecked()) {
+        disable_preproc_inputs();
+    }
 }
+
+
+void NoteshrinkDialog::enable_preproc_inputs()
+{
+    for_each(m_preproc_inputs.begin(), m_preproc_inputs.end(),
+             [] (QWidget *w) { w->setEnabled(true); });
+}
+
+
+void NoteshrinkDialog::disable_preproc_inputs()
+{
+    for_each(m_preproc_inputs.begin(), m_preproc_inputs.end(),
+             [] (QWidget *w) { w->setEnabled(false); });
+}
+
 
 void NoteshrinkDialog::on_m_preview_files_clicked(const QModelIndex &index)
 {
@@ -288,4 +314,93 @@ void NoteshrinkDialog::set_default_values()
     ui->m_do_not_saturate->setChecked(false);
     ui->m_use_pngcrush->setChecked(false);
     ui->m_use_pngquant->setChecked(false);
+}
+
+void NoteshrinkDialog::on_m_preproc_check_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked) {
+        // :fixme: - check if 'convert' exists
+        enable_preproc_inputs();
+    } else if (arg1 == Qt::Unchecked) {
+        disable_preproc_inputs();
+    }
+}
+
+
+void NoteshrinkDialog::run_preview()
+{
+    bool rc = true;
+    QString src, dst;
+    dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8);
+    src = m_preview_image_src_path;
+    if (ui->m_preproc_check->isChecked()) {
+        src = m_preview_image_src_path;
+        dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8) + "_preproc.png";
+        if (run_noteshrink_preproc_preview_cmd(src, dst)) {
+            rc = true;
+            src = dst;
+            dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8);
+        } else {
+            rc = false;
+            QMessageBox::critical(nullptr, "Error", "Error pre-processing image");
+        }
+    }
+    if (rc) {
+        if (run_noteshrink_preview_cmd(src, dst)) {
+            update_preview_image();
+        } else {
+            QMessageBox::critical(nullptr, "Error", "noteshrink.py error");
+        }
+    }
+}
+
+
+bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, const QString &dst)
+{
+    bool rc = false;
+    QString cmd = "convert ";
+    int orig_width = 0, orig_height = 0;
+    int crop_top = 0, crop_left = 0, crop_right = 0, crop_bottom = 0;
+    crop_top = ui->m_crop_top->value();
+    crop_left = ui->m_crop_left->value();
+    crop_right = ui->m_crop_right->value();
+    crop_bottom = ui->m_crop_bottom->value();
+
+    disable_inputs();
+
+    // get size of the original image
+    {
+        QImage src_image(src);
+        orig_width = src_image.width();
+        orig_height = src_image.height();
+    }
+
+    // convert syntax: WxH+Xoff+Yoff
+    cmd += src;
+    cmd += " -crop ";
+    int new_width = orig_width - crop_left - crop_right;
+    int new_height = orig_height - crop_top - crop_bottom;
+    cmd += QString::number(new_width) + "x" + QString::number(new_height) + "+" +
+            QString::number(crop_top) + "+" + QString::number(crop_left) + " ";
+    cmd += " +repage ";
+
+    if (ui->m_resize->value() > 0) {
+        cmd += " -resize ";
+        cmd += QString::number(ui->m_resize->value());
+        cmd += "% ";
+    }
+    cmd += dst;
+
+    ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
+    ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
+
+    QCoreApplication::processEvents();
+    if (QProcess::execute(cmd) == 0) {
+        ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
+        rc = true;
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Error executing convert");
+    }
+    ui->m_log_window->appendPlainText("");
+    return rc;
 }

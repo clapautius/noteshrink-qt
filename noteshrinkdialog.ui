@@ -93,12 +93,12 @@
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="m_preproc_check">
                 <property name="layoutDirection">
                  <enum>Qt::RightToLeft</enum>
                 </property>
                 <property name="text">
-                 <string>Pre-processing options (WIP)</string>
+                 <string>Pre-processing options</string>
                 </property>
                </widget>
               </item>
@@ -123,7 +123,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_4">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="toolTip">
             <string/>
@@ -166,33 +166,45 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_4">
+               <widget class="QSpinBox" name="m_crop_left">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
                 <property name="toolTip">
                  <string/>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="spinBox">
-                <property name="enabled">
-                 <bool>false</bool>
+                <property name="maximum">
+                 <number>9999</number>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_2">
+               <widget class="QSpinBox" name="m_crop_top">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_3">
+               <widget class="QSpinBox" name="m_crop_right">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="m_crop_bottom">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
+                <property name="maximum">
+                 <number>9999</number>
                 </property>
                </widget>
               </item>
@@ -204,7 +216,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox_5">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="title">
             <string/>
@@ -251,7 +263,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox_5">
+               <widget class="QSpinBox" name="m_resize">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
