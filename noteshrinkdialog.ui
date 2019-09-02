@@ -29,7 +29,7 @@
          <number>-1</number>
         </property>
         <property name="styleSheet">
-         <string notr="true">color: #004040;</string>
+         <string notr="true"/>
         </property>
         <property name="title">
          <string/>
@@ -158,7 +158,10 @@
                  <bool>false</bool>
                 </property>
                 <property name="toolTip">
-                 <string/>
+                 <string notr="true" extracomment="Crop: left x top x right x bottom (pixels)">Crop: left x top x right x bottom (pixels)</string>
+                </property>
+                <property name="toolTipDuration">
+                 <number>-1</number>
                 </property>
                 <property name="text">
                  <string>Crop (L,T,R,B)</string>
@@ -171,7 +174,7 @@
                  <bool>false</bool>
                 </property>
                 <property name="toolTip">
-                 <string/>
+                 <string notr="true" extracomment="Crop left (px)">Crop left (px)</string>
                 </property>
                 <property name="maximum">
                  <number>9999</number>
@@ -183,6 +186,9 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="toolTip">
+                 <string notr="true" extracomment="Crop top (px)">Crop top (px)</string>
+                </property>
                 <property name="maximum">
                  <number>9999</number>
                 </property>
@@ -193,6 +199,9 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="toolTip">
+                 <string notr="true" extracomment="Crop right (px)">Crop right (px)</string>
+                </property>
                 <property name="maximum">
                  <number>9999</number>
                 </property>
@@ -202,6 +211,9 @@
                <widget class="QSpinBox" name="m_crop_bottom">
                 <property name="enabled">
                  <bool>false</bool>
+                </property>
+                <property name="toolTip">
+                 <string notr="true" extracomment="Crop bottom (px)">Crop bottom (px)</string>
                 </property>
                 <property name="maximum">
                  <number>9999</number>
