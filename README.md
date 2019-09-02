@@ -5,7 +5,7 @@ GUI for noteshrink.py ( https://github.com/mzucker/noteshrink ).
 
 Features:
  * preview
- * pre-processing (crop, resize) - WIP
+ * pre-processing (crop, resize)
 
 Screenshot
 ==========
