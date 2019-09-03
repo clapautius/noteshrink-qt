@@ -58,53 +58,63 @@ void NoteshrinkDialog::update_preview_image()
 }
 
 
+QString NoteshrinkDialog::compose_noteshrink_cmd(
+        const QStringList &sources, const QString &additional_params)
+{
+    QString cmd = "noteshrink.py ";
+    cmd += "-v ";
+    int i = ui->m_bkg_value_thres->value();
+    cmd += QString::number(i);
+    cmd += " -p ";
+    cmd += QString::number(ui->m_pixels_sample->value());
+    cmd += " -n ";
+    cmd += QString::number(ui->m_num_colors->value());
+    if (ui->m_bkg_white->isChecked()) {
+        cmd += " -w ";
+    }
+    if (ui->m_global_palette->isChecked()) {
+        cmd += " -g ";
+    }
+    if (ui->m_do_not_saturate->isChecked()) {
+        cmd += " -S ";
+    }
+    if (ui->m_use_pngcrush->isChecked()) {
+        cmd += " -C ";
+    }
+    if (ui->m_use_pngquant->isChecked()) {
+        cmd += " -Q ";
+    }
+    if (!additional_params.isEmpty()) {
+        cmd += additional_params;
+    }
+    for(auto &f : sources) {
+        cmd += " ";
+        cmd += f;
+    }
+    return cmd;
+}
+
+
 bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QString &dst)
 {
     bool rc = false;
     bool postprocess = false;
-    QString cmd = "noteshrink.py ";
+    QString cmd;
 
     disable_inputs();
 
-    cmd += "-v ";
-    int i = ui->m_bkg_value_thres->value();
-    cmd += QString::number(i);
+    if (ui->m_do_not_saturate->isChecked() || ui->m_use_pngcrush->isChecked() ||
+            ui->m_use_pngquant->isChecked()) {
+        postprocess = true;
+    }
 
+    QString extra_params;
     // output
-    cmd += " -b ";
-    cmd += dst;
+    extra_params = " -b ";
+    extra_params += dst;
+    extra_params += " -c \"/bin/true\" ";
 
-    cmd += " -p ";
-    cmd += QString::number(ui->m_pixels_sample->value());
-
-    cmd += " -n ";
-    cmd += QString::number(ui->m_num_colors->value());
-
-    if (ui->m_bkg_white->isChecked()) {
-        cmd += " -w ";
-    }
-
-    if (ui->m_global_palette->isChecked()) {
-        cmd += " -g ";
-    }
-
-    if (ui->m_do_not_saturate->isChecked()) {
-        cmd += " -S ";
-        postprocess = true;
-    }
-
-    if (ui->m_use_pngcrush->isChecked()) {
-        cmd += " -C ";
-        postprocess = true;
-    }
-
-    if (ui->m_use_pngquant->isChecked()) {
-        cmd += " -Q ";
-        postprocess = true;
-    }
-    cmd += " -c \"/bin/true\" ";
-
-    cmd += src;
+    cmd = compose_noteshrink_cmd(QStringList(src), extra_params);
 
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
@@ -145,53 +155,22 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
 bool NoteshrinkDialog::run_noteshrink_full_cmd()
 {
     bool rc = false;
-
     disable_inputs();
 
     if (ui->m_preproc_check->isChecked()) {
         run_noteshrink_preproc_full_cmd();
     }
 
-    QString cmd = "noteshrink.py ";
-    cmd += "-v ";
-    int i = ui->m_bkg_value_thres->value();
-    cmd += QString::number(i);
-
-    cmd += " -p ";
-    cmd += QString::number(ui->m_pixels_sample->value());
-
-    cmd += " -n ";
-    cmd += QString::number(ui->m_num_colors->value());
-
-    if (ui->m_bkg_white->isChecked()) {
-        cmd += " -w ";
-    }
-
-    if (ui->m_global_palette->isChecked()) {
-        cmd += " -g ";
-    }
-
-    if (ui->m_do_not_saturate->isChecked()) {
-        cmd += " -S ";
-    }
-
-    if (ui->m_use_pngcrush->isChecked()) {
-        cmd += " -C ";
-    }
-
-    if (ui->m_use_pngquant->isChecked()) {
-        cmd += " -Q ";
-    }
-
+    QString cmd;
+    QStringList sources;
     for(auto &f : m_input_files) {
-        cmd += " ";
         if (ui->m_preproc_check->isChecked()) {
-            cmd += f + "-preproc.png";
+            sources.push_back(f + "-preproc.png");
         } else {
-            cmd += f;
+            sources.push_back(f);
         }
     }
-
+    cmd = compose_noteshrink_cmd(sources, "");
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
