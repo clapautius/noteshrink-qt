@@ -51,6 +51,12 @@ private:
 
     bool run_noteshrink_preproc_full_cmd();
 
+    QString compose_convert_cmd(
+            const QString &src, const QString &dst,
+            int crop_left, int crop_top, int crop_right, int crop_bottom, int resize);
+
+    QString compose_convert_cmd(const QStringList &sources);
+
     void enable_inputs();
 
     void disable_inputs();

@@ -342,18 +342,12 @@ void NoteshrinkDialog::run_preview()
 }
 
 
-bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, const QString &dst)
+QString NoteshrinkDialog::compose_convert_cmd(
+        const QString &src, const QString &dst,
+        int crop_left, int crop_top, int crop_right, int crop_bottom, int resize)
 {
-    bool rc = false;
     QString cmd = "convert ";
     int orig_width = 0, orig_height = 0;
-    int crop_top = 0, crop_left = 0, crop_right = 0, crop_bottom = 0;
-    crop_top = ui->m_crop_top->value();
-    crop_left = ui->m_crop_left->value();
-    crop_right = ui->m_crop_right->value();
-    crop_bottom = ui->m_crop_bottom->value();
-
-    disable_inputs();
 
     // get size of the original image
     {
@@ -371,16 +365,32 @@ bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, co
             QString::number(crop_top) + "+" + QString::number(crop_left) + " ";
     cmd += " +repage ";
 
-    if (ui->m_resize->value() > 0) {
+    if (resize > 0) {
         cmd += " -resize ";
-        cmd += QString::number(ui->m_resize->value());
+        cmd += QString::number(resize);
         cmd += "% ";
     }
     cmd += dst;
+    return cmd;
+}
 
+
+bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, const QString &dst)
+{
+    bool rc = false;
+    QString cmd = "convert ";
+    int crop_top = 0, crop_left = 0, crop_right = 0, crop_bottom = 0;
+    crop_top = ui->m_crop_top->value();
+    crop_left = ui->m_crop_left->value();
+    crop_right = ui->m_crop_right->value();
+    crop_bottom = ui->m_crop_bottom->value();
+
+    disable_inputs();
+
+    cmd = compose_convert_cmd(src, dst,
+                              crop_left, crop_top, crop_right, crop_bottom, ui->m_resize->value());
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
-
     QCoreApplication::processEvents();
     if (QProcess::execute(cmd) == 0) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
@@ -396,9 +406,8 @@ bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, co
 bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
 {
     bool rc = false;
-    QString cmd = "convert ";
+    QString cmd;
     QString dst;
-    int orig_width = 0, orig_height = 0;
     int crop_top = 0, crop_left = 0, crop_right = 0, crop_bottom = 0;
     crop_top = ui->m_crop_top->value();
     crop_left = ui->m_crop_left->value();
@@ -408,36 +417,10 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
     disable_inputs();
 
     for(auto &f : m_input_files) {
-
-        cmd = "convert ";
         dst = f + "-preproc.png";
-
-        // get size of the original image
-        {
-            QImage src_image(f);
-            orig_width = src_image.width();
-            orig_height = src_image.height();
-        }
-
-        // convert syntax: WxH+Xoff+Yoff
-        cmd += f;
-        cmd += " -crop ";
-        int new_width = orig_width - crop_left - crop_right;
-        int new_height = orig_height - crop_top - crop_bottom;
-        cmd += QString::number(new_width) + "x" + QString::number(new_height) + "+" +
-            QString::number(crop_top) + "+" + QString::number(crop_left) + " ";
-        cmd += " +repage ";
-
-        if (ui->m_resize->value() > 0) {
-            cmd += " -resize ";
-            cmd += QString::number(ui->m_resize->value());
-            cmd += "% ";
-        }
-        cmd += dst;
-
+        cmd = compose_convert_cmd(f, dst, crop_left, crop_top, crop_right, crop_bottom, ui->m_resize->value());
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
         ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
-
         QCoreApplication::processEvents();
         if (QProcess::execute(cmd) == 0) {
             ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
