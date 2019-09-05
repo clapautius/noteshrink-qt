@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/noteshrink-qt-icon.png</file>
+    </qresource>
+</RCC>

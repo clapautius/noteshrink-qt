@@ -46,3 +46,6 @@ unix {
 }
 
 INSTALLS += target
+
+RESOURCES += \
+    noteshrink-qt.qrc
