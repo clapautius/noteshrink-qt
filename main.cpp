@@ -4,7 +4,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setWindowIcon(QIcon("noteshrink-qt-icon.png")); // :fixme: add this as resource
+    a.setWindowIcon(QIcon(":/resources/noteshrink-qt-icon.png"));
     NoteshrinkDialog w;
     w.show();
 
