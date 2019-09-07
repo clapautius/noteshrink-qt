@@ -23,6 +23,8 @@ public:
     explicit NoteshrinkDialog(QWidget *parent = nullptr);
     ~NoteshrinkDialog();
 
+    void set_input_files(const QStringList &input_files);
+
 private slots:
     void on_m_params_button_box_clicked(QAbstractButton *button);
 

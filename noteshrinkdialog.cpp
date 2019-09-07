@@ -193,14 +193,7 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
     if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Apply)) {
         run_preview();
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Open) ) {
-       m_input_files = QFileDialog::getOpenFileNames(nullptr, "Select images");
-       if (m_input_files.empty()) {
-           return; // :fixme: proper cleanup
-       }
-       // populate file list
-       m_preview_files_model->setStringList(m_input_files);
-       // preview first image (:fixme: also select it)
-       set_preview_image(m_input_files[0]);
+       set_input_files(QFileDialog::getOpenFileNames(nullptr, "Select images"));
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
         // this is the 'Run' button
         //QMessageBox::critical(nullptr, "Error", "Not implemented yet");
@@ -432,4 +425,17 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
         ui->m_log_window->appendPlainText("");
     }
     return rc;
+}
+
+
+void NoteshrinkDialog::set_input_files(const QStringList &input_files)
+{
+    m_input_files = input_files;
+    if (m_input_files.empty()) {
+        return; // :fixme: proper cleanup
+    }
+    // populate file list
+    m_preview_files_model->setStringList(m_input_files);
+    // preview first image (:fixme: also select it)
+    set_preview_image(m_input_files[0]);
 }
