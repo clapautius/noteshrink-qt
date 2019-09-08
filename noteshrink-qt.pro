@@ -49,3 +49,6 @@ INSTALLS += target
 
 RESOURCES += \
     noteshrink-qt.qrc
+
+DISTFILES += \
+    README.md
