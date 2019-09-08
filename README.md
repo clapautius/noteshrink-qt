@@ -26,10 +26,11 @@ Dev. notes
 Build, install
 --------------
 
-(K)ubuntu 18.04: install qt5-default (qmake will go to qmake-qt5)
+### (K)ubuntu 18.04 notes
 
-Build AppImage (on (k)ubuntu-16.04.6 xenial)
----------------------------------------------
+Install `qt5-default` (`qmake` will go to `qmake-qt5`)
+
+### Build AppImage (on (k)ubuntu-16.04.6 xenial)
 
 This is work in progress !!
 
