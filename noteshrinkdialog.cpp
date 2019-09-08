@@ -22,8 +22,10 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     button->setText("Preview");
     button = ui->m_params_button_box->button(QDialogButtonBox::Ok);
     button->setText("Run");
-    button = ui->m_params_button_box->button(QDialogButtonBox::Help);
+    button = ui->m_params2_button_box->button(QDialogButtonBox::Help);
     button->setText("About");
+    button = ui->m_params2_button_box->button(QDialogButtonBox::Apply);
+    button->setText("Debug window");
 
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast
@@ -198,13 +200,9 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
         // this is the 'Run' button
         //QMessageBox::critical(nullptr, "Error", "Not implemented yet");
         run_noteshrink_full_cmd(); // :fixme: check for errors
-
     } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
         set_default_values();
-    } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Help)) {
-        QMessageBox::about(nullptr, "About", QString("noteshrink-qt ver: ") + NOTESHRINK_QT_VER + "\nhttps://github.com/clapautius/noteshrink-qt");
     }
-
 }
 
 
@@ -438,4 +436,13 @@ void NoteshrinkDialog::set_input_files(const QStringList &input_files)
     m_preview_files_model->setStringList(m_input_files);
     // preview first image (:fixme: also select it)
     set_preview_image(m_input_files[0]);
+}
+
+void NoteshrinkDialog::on_m_params2_button_box_clicked(QAbstractButton *button)
+{
+    if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Help)) {
+            QMessageBox::about(nullptr, "About", QString("noteshrink-qt ver: ") + NOTESHRINK_QT_VER + "\nhttps://github.com/clapautius/noteshrink-qt");
+    } else if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Apply)) {
+            QMessageBox::information(nullptr, "Log window", "Log window");
+    }
 }

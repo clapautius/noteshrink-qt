@@ -9,7 +9,7 @@
 #include <QImage>
 #include <QStringListModel>
 
-#define NOTESHRINK_QT_VER "v3" // :release
+#define NOTESHRINK_QT_VER "v4-beta" // :release
 
 namespace Ui {
 class NoteshrinkDialog;
@@ -35,6 +35,8 @@ private slots:
     void on_m_preview_files_clicked(const QModelIndex &index);
 
     void on_m_preproc_check_stateChanged(int arg1);
+
+    void on_m_params2_button_box_clicked(QAbstractButton *button);
 
 private:
 
