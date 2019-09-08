@@ -15,10 +15,10 @@ Screenshot
 Download
 ========
 
- * [noteshrink-qt-v3-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v3/noteshrink-qt-v3-x86_64.AppImage) - tested on:
-    * (k)ubuntu 16.04 (xenial)
-    * (k)ubuntu 19.04 (disco)
-    * debian 10 (buster).
+ * [noteshrink-qt-v3-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v3/noteshrink-qt-v3-x86_64.AppImage)
+    * tested on:
+        * (k)ubuntu 16.04 xenial; (k)ubuntu 19.04 disco
+        * debian 10 (buster).
 
 Dev. notes
 ==========
