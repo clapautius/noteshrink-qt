@@ -15,9 +15,8 @@ Screenshot
 Download
 ========
 
-[noteshrink-qt-v1-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v1/noteshrink-qt-v1-x86_64.AppImage)
-
-[noteshrink-qt-v2-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v2/noteshrink-qt-v2-x86_64.AppImage)
+ * [noteshrink-qt-v3-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v3/noteshrink-qt-v3-x86_64.AppImage)
+  : should work fine on (k)ubuntu 16.04 (xenial); (k)ubuntu 19.04 (disco); debian 10 (buster).
 
 Dev. notes
 ==========
@@ -42,4 +41,4 @@ This is work in progress !!
     make install INSTALL_ROOT=AppDir
     wget https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage
     chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
-    /linuxdeployqt-continuous-x86_64.AppImage AppDir/share/applications/noteshrink-qt.desktop -no-translations -appimage -no-strip
+    ./linuxdeployqt-continuous-x86_64.AppImage AppDir/share/applications/noteshrink-qt.desktop -no-translations -appimage -no-strip
