@@ -236,7 +236,7 @@ void NoteshrinkDialog::on_m_bkg_value_thres_valueChanged(int value)
 
 void NoteshrinkDialog::on_m_pixels_sample_valueChanged(int value)
 {
-    ui->m_pixels_sample_label->setText(QString("% of pixels to sample: ") +
+    ui->m_pixels_sample_label->setText(QString("Pixels to sample (%): ") +
                                        QString::number(value));
 }
 
