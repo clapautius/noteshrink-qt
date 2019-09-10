@@ -230,7 +230,7 @@ bool NoteshrinkDialog::set_preview_image(QString &img_path)
 
 void NoteshrinkDialog::on_m_bkg_value_thres_valueChanged(int value)
 {
-    ui->m_bkg_value_thres_label->setText(QString("Background value threshold %: ") +
+    ui->m_bkg_value_thres_label->setText(QString("Bkg. value threshold %: ") +
                                          QString::number(value));
 }
 
