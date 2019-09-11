@@ -441,7 +441,12 @@ void NoteshrinkDialog::set_input_files(const QStringList &input_files)
 void NoteshrinkDialog::on_m_params2_button_box_clicked(QAbstractButton *button)
 {
     if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Help)) {
-            QMessageBox::about(nullptr, "About", QString("noteshrink-qt ver: ") + NOTESHRINK_QT_VER + "\nhttps://github.com/clapautius/noteshrink-qt");
+        // don't use '\n' so that the HTML format is automatically recognized
+        QString html_message = QString("noteshrink-qt ver: ") + NOTESHRINK_QT_VER;
+        html_message += "<br>Tudor M. Pristavu";
+        html_message += "<br><a href=\"https://github.com/clapautius/noteshrink-qt\">https://github.com/clapautius/noteshrink-qt</a>";
+        html_message += "<hr>GUI front-end for noteshrink.py";
+        QMessageBox::about(nullptr, "About", html_message);
     } else if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Apply)) {
             QMessageBox::information(nullptr, "Log window", "Log window");
     }
