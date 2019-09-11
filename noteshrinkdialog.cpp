@@ -25,7 +25,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     button = ui->m_params2_button_box->button(QDialogButtonBox::Help);
     button->setText("About");
     button = ui->m_params2_button_box->button(QDialogButtonBox::Apply);
-    button->setText("Debug window");
+    button->setText("Hide debug window");
 
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast

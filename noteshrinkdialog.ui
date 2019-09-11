@@ -651,7 +651,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
-         <string>Log window</string>
+         <string>Debug window</string>
         </property>
         <property name="flat">
          <bool>true</bool>
@@ -723,6 +723,27 @@
       </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="m_preview_label">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font-weight: bold;
+text-decoration: underline;
+</string>
+          </property>
+          <property name="text">
+           <string>Preview</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QLabel" name="m_preview_area">
           <property name="sizePolicy">
