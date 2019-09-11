@@ -9,7 +9,7 @@
 #include <QImage>
 #include <QStringListModel>
 
-#define NOTESHRINK_QT_VER "v4" // :release
+#define NOTESHRINK_QT_VER "v5-beta" // :release
 
 namespace Ui {
 class NoteshrinkDialog;
