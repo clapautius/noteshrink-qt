@@ -31,7 +31,8 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     // :fixme: get rid of the old-style cast
     for (QWidget *w : {(QWidget*)ui->m_params_button_box, (QWidget*)ui->m_bkg_value_thres,
                        (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors,
-                       (QWidget*)ui->m_preproc_check}) {
+                       (QWidget*)ui->m_preproc_check, (QWidget*)ui->m_params2_button_box,
+                       (QWidget*)ui->m_groupbox_12}) {
         m_inputs.push_back(w);
     }
 
@@ -39,7 +40,8 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     // :fixme: get rid of the old-style cast
     for (QWidget *w : {(QWidget*)ui->m_crop_top, (QWidget*)ui->m_crop_left,
                        (QWidget*)ui->m_crop_bottom, (QWidget*)ui->m_crop_right,
-                       (QWidget*)ui->m_resize }) {
+                       (QWidget*)ui->m_resize, (QWidget*)ui->m_crop_label,
+                       (QWidget*)ui->m_resize_label}) {
         m_preproc_inputs.push_back(w);
     }
 
