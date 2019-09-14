@@ -292,8 +292,9 @@ void NoteshrinkDialog::set_default_values()
     ui->m_bkg_value_thres->setValue(25);
     ui->m_pixels_sample->setValue(5);
     ui->m_num_colors->setValue(8);
-    ui->m_bkg_white->setChecked(false);
     ui->m_global_palette->setChecked(false);
+    ui->m_keep_filenames_order->setChecked(false);
+    ui->m_bkg_white->setChecked(false);
     ui->m_do_not_saturate->setChecked(false);
     ui->m_use_pngcrush->setChecked(false);
     ui->m_use_pngquant->setChecked(false);
@@ -467,16 +468,21 @@ void NoteshrinkDialog::aboutToQuit()
 void NoteshrinkDialog::save_settings()
 {
     std::cout << __PRETTY_FUNCTION__ << std::endl;
-    // :todo: - add all parameters
-    if (ui->m_preproc_check->isChecked()) {
-        m_settings.setValue("preproc-on", true);
-        std::cout << "preproc-on is true";
-    }
+    m_settings.setValue("preproc-on", ui->m_preproc_check->isChecked());
     m_settings.setValue("preproc-crop-left", ui->m_crop_left->value());
     m_settings.setValue("preproc-crop-top", ui->m_crop_top->value());
     m_settings.setValue("preproc-crop-right", ui->m_crop_right->value());
     m_settings.setValue("preproc-crop-bottom", ui->m_crop_bottom->value());
-
+    m_settings.setValue("preproc-resize", ui->m_resize->value());
+    m_settings.setValue("bkg-value-threshold", ui->m_bkg_value_thres->value());
+    m_settings.setValue("pixels-to-sample", ui->m_pixels_sample->value());
+    m_settings.setValue("no-of-colors", ui->m_num_colors->value());
+    m_settings.setValue("use-global-palette", ui->m_global_palette->isChecked());
+    m_settings.setValue("keep-filenames-order", ui->m_keep_filenames_order->isChecked());
+    m_settings.setValue("make-bkg-white", ui->m_bkg_white->isChecked());
+    m_settings.setValue("dont-saturate-colors", ui->m_do_not_saturate->isChecked());
+    m_settings.setValue("use-pngquant", ui->m_use_pngquant->isChecked());
+    m_settings.setValue("use-pngcrush", ui->m_use_pngcrush->isChecked());
     m_settings.sync();
 }
 
@@ -484,9 +490,9 @@ void NoteshrinkDialog::save_settings()
 void NoteshrinkDialog::restore_settings()
 {
     std::cout << __PRETTY_FUNCTION__ << std::endl;
-    // :todo: - add all parameters
-    if (m_settings.contains("preproc-on") && m_settings.value("preproc-on").toBool()) {
-        ui->m_preproc_check->setChecked(true);
+    if (m_settings.contains("preproc-on")) {
+        std::cout << "found preproc-on param, value is " << m_settings.value("preproc-on").toBool() << std::endl;
+        ui->m_preproc_check->setChecked(m_settings.value("preproc-on").toBool());
     }
     if (m_settings.contains("preproc-crop-left")) {
         ui->m_crop_left->setValue(m_settings.value("preproc-crop-left").toInt());
@@ -499,5 +505,35 @@ void NoteshrinkDialog::restore_settings()
     }
     if (m_settings.contains("preproc-crop-bottom")) {
         ui->m_crop_bottom->setValue(m_settings.value("preproc-crop-bottom").toInt());
+    }
+    if (m_settings.contains("preproc-resize")) {
+        ui->m_resize->setValue(m_settings.value("preproc-resize").toInt());
+    }
+    if (m_settings.contains("bkg-value-threshold")) {
+        ui->m_bkg_value_thres->setValue(m_settings.value("bkg-value-threshold").toInt());
+    }
+    if (m_settings.contains("pixels-to-sample")) {
+        ui->m_pixels_sample->setValue(m_settings.value("pixels-to-sample").toInt());
+    }
+    if (m_settings.contains("no-of-colors")) {
+        ui->m_num_colors->setValue(m_settings.value("no-of-colors").toInt());
+    }
+    if (m_settings.contains("use-global-palette")) {
+        ui->m_global_palette->setChecked(m_settings.value("use-global-palette").toBool());
+    }
+    if (m_settings.contains("keep-filenames-order")) {
+        ui->m_keep_filenames_order->setChecked(m_settings.value("keep-filenames-order").toBool());
+    }
+    if (m_settings.contains("make-bkg-white")) {
+        ui->m_bkg_white->setChecked(m_settings.value("make-bkg-white").toBool());
+    }
+    if (m_settings.contains("dont-saturate-colors")) {
+        ui->m_do_not_saturate->setChecked(m_settings.value("dont-saturate-colors").toBool());
+    }
+    if (m_settings.contains("use-pngquant")) {
+        ui->m_use_pngquant->setChecked(m_settings.value("use-pngquant").toBool());
+    }
+    if (m_settings.contains("use-pngcrush")) {
+        ui->m_use_pngcrush->setChecked(m_settings.value("use-pngcrush").toBool());
     }
 }
