@@ -1,6 +1,8 @@
 #include "noteshrinkdialog.h"
 #include "ui_noteshrinkdialog.h"
 
+#include <iostream>
+
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QProcess>
@@ -45,6 +47,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
         m_preproc_inputs.push_back(w);
     }
 
+    restore_settings();
 }
 
 NoteshrinkDialog::~NoteshrinkDialog()
@@ -451,5 +454,50 @@ void NoteshrinkDialog::on_m_params2_button_box_clicked(QAbstractButton *button)
         QMessageBox::about(nullptr, "About", html_message);
     } else if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Apply)) {
             QMessageBox::information(nullptr, "Log window", "Log window");
+    }
+}
+
+
+void NoteshrinkDialog::aboutToQuit()
+{
+    save_settings();
+}
+
+
+void NoteshrinkDialog::save_settings()
+{
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
+    // :todo: - add all parameters
+    if (ui->m_preproc_check->isChecked()) {
+        m_settings.setValue("preproc-on", true);
+        std::cout << "preproc-on is true";
+    }
+    m_settings.setValue("preproc-crop-left", ui->m_crop_left->value());
+    m_settings.setValue("preproc-crop-top", ui->m_crop_top->value());
+    m_settings.setValue("preproc-crop-right", ui->m_crop_right->value());
+    m_settings.setValue("preproc-crop-bottom", ui->m_crop_bottom->value());
+
+    m_settings.sync();
+}
+
+
+void NoteshrinkDialog::restore_settings()
+{
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
+    // :todo: - add all parameters
+    if (m_settings.contains("preproc-on") && m_settings.value("preproc-on").toBool()) {
+        ui->m_preproc_check->setChecked(true);
+    }
+    if (m_settings.contains("preproc-crop-left")) {
+        ui->m_crop_left->setValue(m_settings.value("preproc-crop-left").toInt());
+    }
+    if (m_settings.contains("preproc-crop-top")) {
+        ui->m_crop_top->setValue(m_settings.value("preproc-crop-top").toInt());
+    }
+    if (m_settings.contains("preproc-crop-right")) {
+        ui->m_crop_right->setValue(m_settings.value("preproc-crop-right").toInt());
+    }
+    if (m_settings.contains("preproc-crop-bottom")) {
+        ui->m_crop_bottom->setValue(m_settings.value("preproc-crop-bottom").toInt());
     }
 }

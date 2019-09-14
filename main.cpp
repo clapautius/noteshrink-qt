@@ -7,8 +7,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":/resources/noteshrink-qt-icon.png"));
+    QCoreApplication::setOrganizationName("noteshrink-qt");
+    QCoreApplication::setOrganizationDomain("https://github.com/clapautius/noteshrink-qt");
+    QCoreApplication::setApplicationName("noteshrink-qt");
     NoteshrinkDialog w;
     w.show();
+
+    QObject::connect(&a, SIGNAL(aboutToQuit()), &w, SLOT(aboutToQuit()));
 
     QStringList params = a.arguments();
     params.removeAt(0);

@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QImage>
 #include <QStringListModel>
+#include <QSettings>
 
 #define NOTESHRINK_QT_VER "v5-beta" // :release
 
@@ -37,6 +38,8 @@ private slots:
     void on_m_preproc_check_stateChanged(int arg1);
 
     void on_m_params2_button_box_clicked(QAbstractButton *button);
+
+    void aboutToQuit();
 
 private:
 
@@ -73,6 +76,10 @@ private:
 
     void disable_preproc_inputs();
 
+    void save_settings();
+
+    void restore_settings();
+
     Ui::NoteshrinkDialog *ui;
 
     QString m_preview_image_src_path;
@@ -89,6 +96,8 @@ private:
     std::vector<QWidget*> m_preproc_inputs;
 
     QStringList m_input_files;
+
+    QSettings m_settings;
 };
 
 #endif // NOTESHRINKDIALOG_H
