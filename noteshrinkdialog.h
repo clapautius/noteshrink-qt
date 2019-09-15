@@ -64,6 +64,8 @@ private:
 
     QString compose_convert_cmd(const QStringList &sources);
 
+    void check_prereq();
+
     void enable_inputs();
 
     void disable_inputs();
@@ -98,6 +100,8 @@ private:
     QStringList m_input_files;
 
     QSettings m_settings;
+
+    bool m_preproc_available;
 };
 
 #endif // NOTESHRINKDIALOG_H

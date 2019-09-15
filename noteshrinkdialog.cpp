@@ -1,5 +1,6 @@
 #include "noteshrinkdialog.h"
 #include "ui_noteshrinkdialog.h"
+#include "noteshrink_utils.h"
 
 #include <iostream>
 
@@ -13,7 +14,8 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NoteshrinkDialog),
     m_preview_image_tmp_path("/tmp/noteshrink-qt-tmp0000.png"), // :fixme: temporary path
-    m_preview_image_pp_tmp_path("/tmp/noteshrink-qt-tmp0000_post.png") // :fixme: temporary path, also use '-e' for noteshrink
+    m_preview_image_pp_tmp_path("/tmp/noteshrink-qt-tmp0000_post.png"), // :fixme: temporary path, also use '-e' for noteshrink
+    m_preproc_available(false)
 {
     ui->setupUi(this);
     m_preview_files_model = new QStringListModel();
@@ -33,7 +35,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     // :fixme: get rid of the old-style cast
     for (QWidget *w : {(QWidget*)ui->m_params_button_box, (QWidget*)ui->m_bkg_value_thres,
                        (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors,
-                       (QWidget*)ui->m_preproc_check, (QWidget*)ui->m_params2_button_box,
+                       (QWidget*)ui->m_params2_button_box,
                        (QWidget*)ui->m_groupbox_12}) {
         m_inputs.push_back(w);
     }
@@ -48,6 +50,10 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     }
 
     restore_settings();
+    check_prereq();
+    if (m_preproc_available) {
+        m_inputs.push_back((QWidget*)ui->m_preproc_check);
+    }
 }
 
 NoteshrinkDialog::~NoteshrinkDialog()
@@ -535,5 +541,21 @@ void NoteshrinkDialog::restore_settings()
     }
     if (m_settings.contains("use-pngcrush")) {
         ui->m_use_pngcrush->setChecked(m_settings.value("use-pngcrush").toBool());
+    }
+}
+
+/**
+  * Check prerequisites (binaries for conversion, etc.).
+  */
+void NoteshrinkDialog::check_prereq()
+{
+    // check if ImageMagick's 'convert' is available
+    if (!ns_utils::binary_exec_p("convert")) {
+        QMessageBox::information(nullptr, "Information",
+                                 "ImageMagick's \"convert\" application not found.\nPre-processing will not be available.");
+        m_preproc_available = false;
+        ui->m_preproc_check->setEnabled(false);
+    } else {
+        m_preproc_available = true;
     }
 }

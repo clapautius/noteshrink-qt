@@ -25,10 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        noteshrinkdialog.cpp
+        noteshrinkdialog.cpp \
+    noteshrink_utils.cpp
 
 HEADERS += \
-        noteshrinkdialog.h
+        noteshrinkdialog.h \
+    noteshrink_utils.h
 
 FORMS += \
         noteshrinkdialog.ui
