@@ -133,7 +133,8 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     QCoreApplication::processEvents();
-    if (QProcess::execute(cmd) == 0) {
+//    if (QProcess::execute(cmd) == 0) {
+    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this)) {
         update_preview_image();
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
 
@@ -188,7 +189,8 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd()
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     QCoreApplication::processEvents();
-    if (QProcess::execute(cmd) == 0) {
+//    if (QProcess::execute(cmd) == 0) {
+    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this)) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
     } else {
@@ -395,7 +397,8 @@ bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, co
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
     QCoreApplication::processEvents();
-    if (QProcess::execute(cmd) == 0) {
+    //if (QProcess::execute(cmd) == 0) {
+    if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this)) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
     } else {
@@ -425,7 +428,8 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
         ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
         QCoreApplication::processEvents();
-        if (QProcess::execute(cmd) == 0) {
+//        if (QProcess::execute(cmd) == 0) {
+        if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this)) {
             ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
             rc = true;
         } else {
