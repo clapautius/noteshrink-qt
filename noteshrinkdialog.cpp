@@ -29,7 +29,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     button = ui->m_params2_button_box->button(QDialogButtonBox::Help);
     button->setText("About");
     button = ui->m_params2_button_box->button(QDialogButtonBox::Apply);
-    button->setText("Hide debug window");
+    button->setText("Hide log window");
 
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast
@@ -133,8 +133,8 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     QCoreApplication::processEvents();
-//    if (QProcess::execute(cmd) == 0) {
-    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this)) {
+    QString error_msg;
+    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this, error_msg)) {
         update_preview_image();
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
 
@@ -157,7 +157,9 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
         ui->m_log_window->appendPlainText(QString("Output file size: ") + QString::number(size) + " K");
         rc = true;
     } else {
-        QMessageBox::critical(nullptr, "Error", "Error executing noteshrink");
+        rc = false;
+        ui->m_log_window->appendHtml("<div style=\"color: red;\">Error:</div>");
+        ui->m_log_window->appendPlainText(error_msg);
     }
     ui->m_log_window->appendPlainText("");
     enable_inputs();
@@ -165,7 +167,6 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
 }
 
 
-// :fixme: - remove duplicated code
 bool NoteshrinkDialog::run_noteshrink_full_cmd()
 {
     bool rc = false;
@@ -189,11 +190,13 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd()
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     QCoreApplication::processEvents();
-//    if (QProcess::execute(cmd) == 0) {
-    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this)) {
+    QString error_msg;
+    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this, error_msg)) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
     } else {
+        ui->m_log_window->appendHtml("<div style=\"color: red;\">Error:</div>");
+        ui->m_log_window->appendPlainText(error_msg);
         QMessageBox::critical(nullptr, "Error", "Error executing noteshrink");
     }
     ui->m_log_window->appendPlainText("");
@@ -211,8 +214,9 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
        set_input_files(QFileDialog::getOpenFileNames(nullptr, "Select images"));
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
         // this is the 'Run' button
-        //QMessageBox::critical(nullptr, "Error", "Not implemented yet");
-        run_noteshrink_full_cmd(); // :fixme: check for errors
+        if (!run_noteshrink_full_cmd()) {
+            QMessageBox::critical(this, "Error", "noteshrink.py error");
+        }
     } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
         set_default_values();
     }
@@ -397,11 +401,13 @@ bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, co
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
     QCoreApplication::processEvents();
-    //if (QProcess::execute(cmd) == 0) {
-    if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this)) {
+    QString error_msg;
+    if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this, error_msg)) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
     } else {
+        ui->m_log_window->appendHtml("<div style=\"color: red;\">Error:</div>");
+        ui->m_log_window->appendPlainText(error_msg);
         QMessageBox::critical(nullptr, "Error", "Error executing convert");
     }
     ui->m_log_window->appendPlainText("");
@@ -428,11 +434,13 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
         ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
         QCoreApplication::processEvents();
-//        if (QProcess::execute(cmd) == 0) {
-        if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this)) {
+        QString error_msg;
+        if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this, error_msg)) {
             ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
             rc = true;
         } else {
+            ui->m_log_window->appendHtml("<div style=\"color: red;\">Error:</div>");
+            ui->m_log_window->appendPlainText(error_msg);
             QMessageBox::critical(nullptr, "Error", "Error executing convert");
             break;
         }
@@ -464,7 +472,7 @@ void NoteshrinkDialog::on_m_params2_button_box_clicked(QAbstractButton *button)
         html_message += "<hr>GUI front-end for noteshrink.py";
         QMessageBox::about(nullptr, "About", html_message);
     } else if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Apply)) {
-            QMessageBox::information(nullptr, "Log window", "Log window");
+            QMessageBox::information(nullptr, "Log window", "Not ready yet");
     }
 }
 

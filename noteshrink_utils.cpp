@@ -20,7 +20,7 @@ bool binary_exec_p(const QString &command)
 }
 
 
-bool exec_cmd(const QString &command, const QString &progress_text, QWidget *parent)
+bool exec_cmd(const QString &command, const QString &progress_text, QWidget *parent, QString &error_output)
 {
     bool rc = false;
     QProcess program;
@@ -43,6 +43,9 @@ bool exec_cmd(const QString &command, const QString &progress_text, QWidget *par
                     break;
                 } else {
                     rc = false;
+                    QByteArray output_bin;
+                    output_bin = program.readAllStandardError();
+                    error_output = QString(output_bin);
                     break;
                 }
             } else {

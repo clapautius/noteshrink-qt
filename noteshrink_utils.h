@@ -19,7 +19,7 @@ bool binary_exec_p(const QString &command);
  * @param command
  * @return true if command was executed succesfully, false otherwise.
  */
-bool exec_cmd(const QString &command, const QString &progress_text, QWidget *parent);
+bool exec_cmd(const QString &command, const QString &progress_text, QWidget *parent, QString &error_output);
 
 }
 
