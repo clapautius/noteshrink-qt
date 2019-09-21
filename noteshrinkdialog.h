@@ -9,6 +9,7 @@
 #include <QImage>
 #include <QStringListModel>
 #include <QSettings>
+#include <QTemporaryDir>
 
 #define NOTESHRINK_QT_VER "v5-beta" // :release
 
@@ -25,6 +26,11 @@ public:
     ~NoteshrinkDialog();
 
     void set_input_files(const QStringList &input_files);
+
+    bool init_ok() const
+    {
+        return (m_temp_dir != nullptr);
+    }
 
 private slots:
     void on_m_params_button_box_clicked(QAbstractButton *button);
@@ -102,6 +108,8 @@ private:
     QSettings m_settings;
 
     bool m_preproc_available;
+
+    QTemporaryDir *m_temp_dir;
 };
 
 #endif // NOTESHRINKDIALOG_H

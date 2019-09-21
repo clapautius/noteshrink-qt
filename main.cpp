@@ -11,6 +11,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("https://github.com/clapautius/noteshrink-qt");
     QCoreApplication::setApplicationName("noteshrink-qt");
     NoteshrinkDialog w;
+    if (!w.init_ok()) {
+        return 1;
+    }
     w.show();
 
     QObject::connect(&a, SIGNAL(aboutToQuit()), &w, SLOT(aboutToQuit()));

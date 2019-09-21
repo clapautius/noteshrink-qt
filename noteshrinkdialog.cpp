@@ -13,9 +13,7 @@
 NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NoteshrinkDialog),
-    m_preview_image_tmp_path("/tmp/noteshrink-qt-tmp0000.png"), // :fixme: temporary path
-    m_preview_image_pp_tmp_path("/tmp/noteshrink-qt-tmp0000_post.png"), // :fixme: temporary path, also use '-e' for noteshrink
-    m_preproc_available(false)
+    m_preproc_available(false), m_temp_dir(nullptr)
 {
     ui->setupUi(this);
     m_preview_files_model = new QStringListModel();
@@ -54,11 +52,31 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     if (m_preproc_available) {
         m_inputs.push_back((QWidget*)ui->m_preproc_check);
     }
+
+    // create temp dir & setup temp files
+    m_temp_dir = new QTemporaryDir();
+    if (!m_temp_dir->isValid()) {
+        QMessageBox::information(nullptr, "Warning", "Error creating temp dir. at default location. "
+                                                     "Trying current dir.");
+        delete m_temp_dir;
+        m_temp_dir = new QTemporaryDir("./");
+        if (!m_temp_dir->isValid()) {
+            QMessageBox::critical(nullptr, "Error", "Error creating temp dir. in current dir.");
+            delete m_temp_dir;
+            m_temp_dir = nullptr;
+        }
+        // :fixme: - try again using the src. dir of the images
+    }
+    if (m_temp_dir) {
+        m_preview_image_tmp_path = m_temp_dir->filePath("noteshrink-qt-tmp0000.png");
+        m_preview_image_pp_tmp_path = m_temp_dir->filePath("noteshrink-qt-tmp0000_post.png");
+    }
 }
 
 NoteshrinkDialog::~NoteshrinkDialog()
 {
     delete ui;
+    delete m_temp_dir;
 }
 
 
