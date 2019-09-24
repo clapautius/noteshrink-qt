@@ -69,8 +69,9 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
         // :fixme: - try again using the src. dir of the images
     }
     if (m_temp_dir) {
-        m_preview_image_tmp_path = m_temp_dir->filePath("noteshrink-qt-tmp0000.png");
-        m_preview_image_pp_tmp_path = m_temp_dir->filePath("noteshrink-qt-tmp0000_post.png");
+        QDir temp_dir_path(m_temp_dir->path());
+        m_preview_image_tmp_path = temp_dir_path.filePath("noteshrink-qt-tmp0000.png");
+        m_preview_image_pp_tmp_path = temp_dir_path.filePath("noteshrink-qt-tmp0000_post.png");
     }
 }
 
