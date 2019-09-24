@@ -9,6 +9,7 @@
 #include <QProcess>
 #include <QFile>
 #include <QPushButton>
+#include <QDir>
 
 NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
@@ -207,6 +208,12 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd()
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
+    // save current dir. and change dir. to path of the first image
+    QDir orig_dir = QDir::current();
+    QFileInfo first_img(m_input_files[0]);
+    QDir::setCurrent(first_img.absolutePath());
+    ui->m_log_window->appendPlainText(QString("Current dir. is now: ") + first_img.absolutePath());
+
     QCoreApplication::processEvents();
     QString error_msg;
     if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this, error_msg)) {
@@ -218,6 +225,11 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd()
         QMessageBox::critical(nullptr, "Error", "Error executing noteshrink");
     }
     ui->m_log_window->appendPlainText("");
+
+    // restore previous dir.
+    QDir::setCurrent(orig_dir.absolutePath());
+    ui->m_log_window->appendPlainText(QString("Current dir. is now: ") + orig_dir.absolutePath());
+
     enable_inputs();
     return rc;
 }
