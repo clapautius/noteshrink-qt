@@ -22,6 +22,7 @@ Tested on: (k)ubuntu 16.04 _xenial_, (k)ubuntu 19.04 _disco_, debian 10 _buster_
 
  * [noteshrink-qt-v3-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v3/noteshrink-qt-v3-x86_64.AppImage) 
  * [noteshrink-qt-v4-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v4/noteshrink-qt-v4-x86_64.AppImage) 
+ * [noteshrink-qt-v5-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v5/noteshrink-qt-v5-x86_64.AppImage) 
 
 Dev. notes
 ==========
