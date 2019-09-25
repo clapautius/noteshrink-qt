@@ -245,7 +245,9 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
        set_input_files(QFileDialog::getOpenFileNames(nullptr, "Select images"));
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
         // this is the 'Run' button
-        if (!run_noteshrink_full_cmd()) {
+        if (m_input_files.size() == 0) {
+            QMessageBox::information(nullptr, "Error", "No images to convert");
+        } else if (!run_noteshrink_full_cmd()) {
             QMessageBox::critical(this, "Error", "noteshrink.py error");
         }
     } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
@@ -358,6 +360,10 @@ void NoteshrinkDialog::run_preview()
 {
     bool rc = true;
     QString src, dst;
+    if (m_preview_image_src_path.isEmpty()) {
+        QMessageBox::information(nullptr, "Error", "No image selected for preview");
+        return;
+    }
     dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8);
     src = m_preview_image_src_path;
     if (ui->m_preproc_check->isChecked()) {
