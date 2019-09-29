@@ -43,7 +43,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     for (QWidget *w : {(QWidget*)ui->m_params_button_box, (QWidget*)ui->m_bkg_value_thres,
                        (QWidget*)ui->m_pixels_sample, (QWidget*)ui->m_num_colors,
                        (QWidget*)ui->m_params2_button_box,
-                       (QWidget*)ui->m_groupbox_12}) {
+                       (QWidget*)ui->m_noteshrink_params2_box}) {
         m_inputs.push_back(w);
     }
 
