@@ -18,10 +18,18 @@ Download
 AppImage
 --------
 
-Tested on: (k)ubuntu 16.04 _xenial_, (k)ubuntu 19.04 _disco_, debian 10 _buster_, openSUSE _Leap_ 15 .
-
  * [noteshrink-qt-v5-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v5/noteshrink-qt-v5-x86_64.AppImage) 
  * [noteshrink-qt-v6-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v6/noteshrink-qt-v6-x86_64.AppImage) 
+
+### To run an AppImage, simply:
+
+**make it executable:** `chmod a+x SomeApp.AppImage`
+
+**and run:** `./SomeApp.AppImage`
+
+### Details
+
+Tested on: (k)ubuntu 16.04 _xenial_, (k)ubuntu 19.04 _disco_, debian 10 _buster_, openSUSE _Leap_ 15 .
 
 Dev. notes
 ==========
