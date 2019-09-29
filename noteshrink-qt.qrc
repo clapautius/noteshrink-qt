@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/noteshrink-qt-icon.png</file>
+        <file>resources/document-print-preview.png</file>
+        <file>resources/system-about.png</file>
+        <file>resources/system-run.png</file>
+        <file>resources/gtk-open.png</file>
+        <file>resources/view-media-lyrics.png</file>
+        <file>resources/reset.png</file>
     </qresource>
 </RCC>

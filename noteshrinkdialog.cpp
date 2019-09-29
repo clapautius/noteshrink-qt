@@ -20,15 +20,23 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     m_preview_files_model = new QStringListModel();
     ui->m_preview_files->setModel(m_preview_files_model);
 
-    // setup buttons
+    // setup buttons & icons
     QPushButton *button = ui->m_params_button_box->button(QDialogButtonBox::Apply);
     button->setText("Preview");
+    button->setIcon(QIcon(":/resources/document-print-preview.png"));
     button = ui->m_params_button_box->button(QDialogButtonBox::Ok);
     button->setText("Run");
+    button->setIcon(QIcon(":/resources/system-run.png"));
+    button = ui->m_params_button_box->button(QDialogButtonBox::Open);
+    button->setIcon(QIcon(":/resources/gtk-open.png"));
+    button = ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults);
+    button->setIcon(QIcon(":/resources/reset.png"));
     button = ui->m_params2_button_box->button(QDialogButtonBox::Help);
     button->setText("About");
+    button->setIcon(QIcon(":/resources/system-about.png"));
     button = ui->m_params2_button_box->button(QDialogButtonBox::Apply);
     button->setText("Hide log window");
+    button->setIcon(QIcon(":/resources/view-media-lyrics.png"));
 
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast
