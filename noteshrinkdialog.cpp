@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QPushButton>
 #include <QDir>
+#include <QProgressDialog>
 
 NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
@@ -37,6 +38,9 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     button = ui->m_params2_button_box->button(QDialogButtonBox::Apply);
     button->setText("Hide log window");
     button->setIcon(QIcon(":/resources/view-media-lyrics.png"));
+
+    QPushButton *def_button = ui->m_params_button_box->button(QDialogButtonBox::Open);
+    def_button->setDefault(true);
 
     // put all input controls in a vector
     // :fixme: get rid of the old-style cast
@@ -136,7 +140,8 @@ QString NoteshrinkDialog::compose_noteshrink_cmd(
 }
 
 
-bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QString &dst)
+bool NoteshrinkDialog::run_noteshrink_preview_cmd(
+        const QString &orig, const QString &src, const QString &dst)
 {
     bool rc = false;
     bool postprocess = false;
@@ -160,9 +165,15 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
+    QProgressDialog progress("Shrinking notes ...", "", 0, 0, this, Qt::Dialog);
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setCancelButton(nullptr);
+
     QCoreApplication::processEvents();
     QString error_msg;
-    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this, error_msg)) {
+    if (ns_utils::exec_cmd(cmd, error_msg)) {
         update_preview_image();
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
 
@@ -183,6 +194,8 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
         QFile output_file(m_preview_image_tmp_path);
         qint64 size = output_file.size() / 1024;
         ui->m_log_window->appendPlainText(QString("Output file size: ") + QString::number(size) + " K");
+        QFileInfo orig_file(orig);
+        ui->m_preview_label->setText(orig_file.fileName() + " (" + QString::number(size) + "K)");
         rc = true;
     } else {
         rc = false;
@@ -195,9 +208,46 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(const QString &src, const QStr
 }
 
 
+bool NoteshrinkDialog::clean_up_old_files()
+{
+    QDir current_dir(".");
+    QStringList filters;
+    filters << "page*.png" << "page*_post.png" << "output.pdf";
+    QStringList old_files = current_dir.entryList(filters);
+    if (old_files.size() > 0) {
+        QMessageBox::StandardButton button =
+                QMessageBox::information(this, "Overwrite?", "Old output files detected, delete them?",
+                                         QMessageBox::Cancel | QMessageBox::Ok);
+        if (button == QMessageBox::Ok) {
+            for (auto &old_file : old_files) {
+                log_message(QString("Deleting old file: " + old_file), true);
+                if (!QFile::remove(old_file)) {
+                    QMessageBox::warning(this, "Error", QString("Error deleting file: ") + old_file);
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 bool NoteshrinkDialog::run_noteshrink_full_cmd()
 {
     bool rc = false;
+
+    // save current dir. and change dir. to path of the first image
+    QDir orig_dir = QDir::current();
+    QFileInfo first_img(m_input_files[0]);
+    QDir::setCurrent(first_img.absolutePath());
+    ui->m_log_window->appendPlainText(QString("Current dir. is now: ") + first_img.absolutePath());
+
+    if (!clean_up_old_files()) {
+        return false;
+    }
+
     disable_inputs();
 
     if (ui->m_preproc_check->isChecked()) {
@@ -217,15 +267,35 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd()
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
-    // save current dir. and change dir. to path of the first image
-    QDir orig_dir = QDir::current();
-    QFileInfo first_img(m_input_files[0]);
-    QDir::setCurrent(first_img.absolutePath());
-    ui->m_log_window->appendPlainText(QString("Current dir. is now: ") + first_img.absolutePath());
+    int total_files = m_input_files.size();
+    QProgressDialog progress("Shrinking notes ...", "", 0, total_files + 1, this, Qt::Dialog);
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setCancelButton(nullptr);
 
     QCoreApplication::processEvents();
     QString error_msg;
-    if (ns_utils::exec_cmd(cmd, "Shrinking notes ...", this, error_msg)) {
+    int current_file_no = 0;
+    std::function<void(QProcess&)> update_func = [&](QProcess &)
+    {
+        QString waiting;
+        if (current_file_no == total_files) {
+            waiting = "output.pdf";
+        } else if (current_file_no < total_files) {
+            waiting.sprintf("page%04d.png", current_file_no);
+        }
+        std::cout <<"Waiting for file: " << waiting.toStdString().c_str() << std::endl;
+        if (!waiting.isEmpty() && QFile::exists(waiting)) {
+            std::cout << "Detected file: " << waiting.toStdString().c_str() << std::endl;
+            if (current_file_no < total_files) {
+                std::cout << "Increment current value: " << progress.value() << std::endl;
+                progress.setValue(progress.value() + 1);
+            }
+            current_file_no++;
+        }
+    };
+    if (ns_utils::exec_cmd(cmd, error_msg, 100, update_func)) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
     } else {
@@ -374,6 +444,7 @@ void NoteshrinkDialog::run_preview()
     }
     dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8);
     src = m_preview_image_src_path;
+    QString orig = src;
     if (ui->m_preproc_check->isChecked()) {
         src = m_preview_image_src_path;
         dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8) + "_preproc.png";
@@ -387,7 +458,7 @@ void NoteshrinkDialog::run_preview()
         }
     }
     if (rc) {
-        if (run_noteshrink_preview_cmd(src, dst)) {
+        if (run_noteshrink_preview_cmd(orig, src, dst)) {
             update_preview_image();
         } else {
             QMessageBox::critical(nullptr, "Error", "noteshrink.py error");
@@ -447,7 +518,12 @@ bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, co
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
     QCoreApplication::processEvents();
     QString error_msg;
-    if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this, error_msg)) {
+    QProgressDialog progress("Pre-processing ...", "", 0, 0, this, Qt::Dialog);
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setCancelButton(nullptr);
+    if (ns_utils::exec_cmd(cmd, error_msg)) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
     } else {
@@ -472,6 +548,11 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
     crop_bottom = ui->m_crop_bottom->value();
 
     disable_inputs();
+    QProgressDialog progress("Pre-processing ...", "", 0, m_input_files.size(), this, Qt::Dialog);
+    progress.setMinimumDuration(0);
+    progress.setValue(0);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setCancelButton(nullptr);
 
     for(auto &f : m_input_files) {
         dst = f + "-preproc.png";
@@ -480,7 +561,7 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
         ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
         QCoreApplication::processEvents();
         QString error_msg;
-        if (ns_utils::exec_cmd(cmd, "Pre-processing ...", this, error_msg)) {
+        if (ns_utils::exec_cmd(cmd, error_msg)) {
             ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
             rc = true;
         } else {
@@ -490,6 +571,7 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
             break;
         }
         ui->m_log_window->appendPlainText("");
+        progress.setValue(progress.value() + 1);
     }
     return rc;
 }
@@ -517,7 +599,7 @@ void NoteshrinkDialog::on_m_params2_button_box_clicked(QAbstractButton *button)
         html_message += "<hr>GUI front-end for noteshrink.py";
         QMessageBox::about(nullptr, "About", html_message);
     } else if ((QPushButton*)button == ui->m_params2_button_box->button(QDialogButtonBox::Apply)) {
-            QMessageBox::information(nullptr, "Log window", "Not ready yet");
+        toggle_log_window((QPushButton*)button);
     }
 }
 
@@ -614,5 +696,26 @@ void NoteshrinkDialog::check_prereq()
         ui->m_preproc_check->setEnabled(false);
     } else {
         m_preproc_available = true;
+    }
+}
+
+
+void NoteshrinkDialog::log_message(const QString &msg, bool print_to_stdout)
+{
+    ui->m_log_window->appendPlainText(msg);
+    if (print_to_stdout) {
+        std::cout << msg.toStdString().c_str() << std::endl;
+    }
+}
+
+
+void NoteshrinkDialog::toggle_log_window(QPushButton *toggle_button)
+{
+    if (ui->m_log_box->isHidden()) {
+        ui->m_log_box->show();
+        toggle_button->setText("Hide log window");
+    } else {
+        ui->m_log_box->hide();
+        toggle_button->setText("Show log window");
     }
 }

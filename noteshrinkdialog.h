@@ -11,11 +11,14 @@
 #include <QSettings>
 #include <QTemporaryDir>
 
-#define NOTESHRINK_QT_VER "v6" // :release
+#define NOTESHRINK_QT_VER "v7-beta" // :release
 
 namespace Ui {
 class NoteshrinkDialog;
 }
+
+class QProgressDialog;
+class QProcess;
 
 class NoteshrinkDialog : public QDialog
 {
@@ -53,7 +56,7 @@ private:
 
     void run_preview();
 
-    bool run_noteshrink_preview_cmd(const QString &src, const QString &dst);
+    bool run_noteshrink_preview_cmd(const QString &orig, const QString &src, const QString &dst);
 
     bool run_noteshrink_full_cmd();
 
@@ -87,6 +90,12 @@ private:
     void save_settings();
 
     void restore_settings();
+
+    bool clean_up_old_files();
+
+    void log_message(const QString &msg, bool print_to_stdout = false);
+
+    void toggle_log_window(QPushButton *toggle_button);
 
     Ui::NoteshrinkDialog *ui;
 

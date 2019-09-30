@@ -2,7 +2,9 @@
 #define NOTESHRINK_UTILS_H
 
 #include <QString>
-#include <QWidget>
+#include <functional>
+
+class QProcess;
 
 namespace ns_utils
 {
@@ -19,7 +21,8 @@ bool binary_exec_p(const QString &command);
  * @param command
  * @return true if command was executed succesfully, false otherwise.
  */
-bool exec_cmd(const QString &command, const QString &progress_text, QWidget *parent, QString &error_output);
+bool exec_cmd(const QString &command, QString &error_output, int interval = 100,
+              std::function<void(QProcess&)> f = nullptr);
 
 }
 
