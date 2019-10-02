@@ -58,7 +58,7 @@ private:
 
     bool run_noteshrink_preview_cmd(const QString &orig, const QString &src, const QString &dst);
 
-    bool run_noteshrink_full_cmd();
+    bool run_noteshrink_full_cmd(QString &err_msg);
 
     QString compose_noteshrink_cmd(const QStringList &sources,
                                    const QString &additional_params);

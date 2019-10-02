@@ -234,7 +234,7 @@ bool NoteshrinkDialog::clean_up_old_files()
 }
 
 
-bool NoteshrinkDialog::run_noteshrink_full_cmd()
+bool NoteshrinkDialog::run_noteshrink_full_cmd(QString &err_msg)
 {
     bool rc = false;
 
@@ -245,6 +245,10 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd()
     ui->m_log_window->appendPlainText(QString("Current dir. is now: ") + first_img.absolutePath());
 
     if (!clean_up_old_files()) {
+        err_msg = "Operation aborted";
+        // restore previous dir.
+        QDir::setCurrent(orig_dir.absolutePath());
+        ui->m_log_window->appendPlainText(QString("Current dir. is now: ") + orig_dir.absolutePath());
         return false;
     }
 
@@ -323,10 +327,11 @@ void NoteshrinkDialog::on_m_params_button_box_clicked(QAbstractButton *button)
        set_input_files(QFileDialog::getOpenFileNames(nullptr, "Select images"));
     } else if((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::Ok) ) {
         // this is the 'Run' button
+        QString err_msg("noteshrink.py error"); // generic error
         if (m_input_files.size() == 0) {
             QMessageBox::information(nullptr, "Error", "No images to convert");
-        } else if (!run_noteshrink_full_cmd()) {
-            QMessageBox::critical(this, "Error", "noteshrink.py error");
+        } else if (!run_noteshrink_full_cmd(err_msg)) {
+            QMessageBox::critical(this, "Error", err_msg);
         }
     } else if ((QPushButton*)button == ui->m_params_button_box->button(QDialogButtonBox::RestoreDefaults)) {
         set_default_values();
