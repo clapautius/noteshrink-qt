@@ -351,7 +351,8 @@ bool NoteshrinkDialog::set_preview_image(QString &img_path)
         // copy src to tmp for initial preview
         if (QFile::copy(m_preview_image_src_path, m_preview_image_tmp_path)) {
             update_preview_image();
-
+            QFileInfo orig_file(img_path);
+            ui->m_preview_label->setText(orig_file.fileName());
         } else {
             QMessageBox::critical(nullptr, "Error", "Cannot create temporary file");
             rc = false;
