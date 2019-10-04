@@ -489,6 +489,7 @@ QString NoteshrinkDialog::compose_convert_cmd(
 
     // convert syntax: WxH+Xoff+Yoff
     cmd += src;
+    cmd += " -strip "; // get rid of EXIF that can make noteshrink.py crash sometimes
     cmd += " -crop ";
     int new_width = orig_width - crop_left - crop_right;
     int new_height = orig_height - crop_top - crop_bottom;
