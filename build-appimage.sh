@@ -52,7 +52,7 @@ make CXXFLAGS="$cxxflags" || die 2 "make error"
 mkdir -p AppDir || die 2 "mkdir error"
 make install INSTALL_ROOT=AppDir || die 2 "make install error"
 
-./linuxdeployqt AppDir/share/applications/noteshrink-qt.desktop -no-translations -appimage -no-strip || die 2 "linuxdeployqt error"
+./linuxdeployqt AppDir/share/applications/noteshrink-qt.desktop -no-translations -appimage || die 2 "linuxdeployqt error"
 
 popd > /dev/null
 
