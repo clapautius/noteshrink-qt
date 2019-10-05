@@ -40,6 +40,9 @@
      <property name="title">
       <string/>
      </property>
+     <property name="flat">
+      <bool>false</bool>
+     </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="spacing">
        <number>0</number>
@@ -107,6 +110,13 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line_1">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QGroupBox" name="m_preprocessing_box_try">
         <property name="title">
          <string/>
@@ -136,13 +146,6 @@
          <property name="bottomMargin">
           <number>1</number>
          </property>
-         <item>
-          <widget class="Line" name="line_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <property name="spacing">
@@ -309,13 +312,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line">
-        <property name="styleSheet">
-         <string notr="true">margin: 2px;</string>
-        </property>
-        <property name="lineWidth">
-         <number>2</number>
-        </property>
+       <widget class="Line" name="line_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -419,9 +416,6 @@
       </item>
       <item>
        <widget class="QGroupBox" name="m_noteshrink_params2_box">
-        <property name="title">
-         <string/>
-        </property>
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
         </property>
@@ -561,7 +555,7 @@
        </widget>
       </item>
       <item>
-       <widget class="Line" name="line_4">
+       <widget class="Line" name="line_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

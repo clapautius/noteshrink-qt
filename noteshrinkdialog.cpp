@@ -272,9 +272,9 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd(QString &err_msg)
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     int total_files = m_input_files.size();
-    QProgressDialog progress("Shrinking notes ...", "", 0, total_files + 1, this, Qt::Dialog);
+    QProgressDialog progress("Shrinking notes ...", "", 0, total_files + 2, this, Qt::Dialog);
     progress.setMinimumDuration(0);
-    progress.setValue(0);
+    progress.setValue(1);
     progress.setWindowModality(Qt::WindowModal);
     progress.setCancelButton(nullptr);
 
@@ -292,7 +292,7 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd(QString &err_msg)
         std::cout <<"Waiting for file: " << waiting.toStdString().c_str() << std::endl;
         if (!waiting.isEmpty() && QFile::exists(waiting)) {
             std::cout << "Detected file: " << waiting.toStdString().c_str() << std::endl;
-            if (current_file_no < total_files) {
+            if (current_file_no <= total_files + 2) {
                 std::cout << "Increment current value: " << progress.value() << std::endl;
                 progress.setValue(progress.value() + 1);
             }
@@ -555,9 +555,9 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
     crop_bottom = ui->m_crop_bottom->value();
 
     disable_inputs();
-    QProgressDialog progress("Pre-processing ...", "", 0, m_input_files.size(), this, Qt::Dialog);
+    QProgressDialog progress("Pre-processing ...", "", 0, m_input_files.size() + 1, this, Qt::Dialog);
     progress.setMinimumDuration(0);
-    progress.setValue(0);
+    progress.setValue(1);
     progress.setWindowModality(Qt::WindowModal);
     progress.setCancelButton(nullptr);
 
