@@ -20,7 +20,7 @@ AppImage (linux)
 
 Latest release: [noteshrink-qt-v7-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v7/noteshrink-qt-v7-linux-x86_64.AppImage)
 
-Latest beta release: [noteshrink-qt-v8-beta-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v8-beta/noteshrink-qt-v8-beta-linux-x86_64.AppImage)
+Latest beta release: [noteshrink-qt-v8-beta-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v8-beta/noteshrink-qt-v8-beta-x86_64.AppImage)
 
 ### To run an AppImage, simply:
 
