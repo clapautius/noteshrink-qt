@@ -11,7 +11,7 @@
 #include <QSettings>
 #include <QTemporaryDir>
 
-#define NOTESHRINK_QT_VER "v7" // :release
+#define NOTESHRINK_QT_VER "v8-beta" // :release
 
 namespace Ui {
 class NoteshrinkDialog;
@@ -32,7 +32,7 @@ public:
 
     bool init_ok() const
     {
-        return (m_temp_dir != nullptr);
+        return (m_temp_dir != nullptr && m_binary_found);
     }
 
 private slots:
@@ -73,7 +73,7 @@ private:
 
     QString compose_convert_cmd(const QStringList &sources);
 
-    void check_prereq();
+    bool check_prereq();
 
     void enable_inputs();
 
@@ -119,6 +119,10 @@ private:
     bool m_preproc_available;
 
     QTemporaryDir *m_temp_dir;
+
+    QString m_noteshrink_bin;
+
+    bool m_binary_found;
 };
 
 #endif // NOTESHRINKDIALOG_H

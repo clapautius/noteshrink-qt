@@ -15,7 +15,8 @@
 NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NoteshrinkDialog),
-    m_preproc_available(false), m_temp_dir(nullptr)
+    m_preproc_available(false), m_temp_dir(nullptr),
+    m_noteshrink_bin("noteshrink.py"), m_binary_found(false)
 {
     ui->setupUi(this);
     m_preview_files_model = new QStringListModel();
@@ -106,8 +107,8 @@ void NoteshrinkDialog::update_preview_image()
 QString NoteshrinkDialog::compose_noteshrink_cmd(
         const QStringList &sources, const QString &additional_params)
 {
-    QString cmd = "noteshrink.py ";
-    cmd += "-v ";
+    QString cmd = m_noteshrink_bin;
+    cmd += " -v ";
     int i = ui->m_bkg_value_thres->value();
     cmd += QString::number(i);
     cmd += " -p ";
@@ -635,6 +636,7 @@ void NoteshrinkDialog::save_settings()
     m_settings.setValue("dont-saturate-colors", ui->m_do_not_saturate->isChecked());
     m_settings.setValue("use-pngquant", ui->m_use_pngquant->isChecked());
     m_settings.setValue("use-pngcrush", ui->m_use_pngcrush->isChecked());
+    m_settings.setValue("noteshrink-bin", m_noteshrink_bin);
     m_settings.sync();
 }
 
@@ -688,13 +690,43 @@ void NoteshrinkDialog::restore_settings()
     if (m_settings.contains("use-pngcrush")) {
         ui->m_use_pngcrush->setChecked(m_settings.value("use-pngcrush").toBool());
     }
+    if (m_settings.contains("noteshrink-bin")) {
+        m_noteshrink_bin = m_settings.value("noteshrink-bin").toString();
+    }
 }
 
 /**
   * Check prerequisites (binaries for conversion, etc.).
+  *
+  * @return false if we should abort
   */
-void NoteshrinkDialog::check_prereq()
+bool NoteshrinkDialog::check_prereq()
 {
+    // check if noteshrink.py binary is available
+    if (!ns_utils::binary_exec_p(m_noteshrink_bin)) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::information(nullptr, "Information",
+                                 "noteshrink.py binary not found.\nIf it is installed, press 'Open' and select it.",
+                                         QMessageBox::Open | QMessageBox::Abort,
+                                         QMessageBox::Abort);
+        if (reply == QMessageBox::Abort) {
+            return false;
+        } else if (reply == QMessageBox::Open) {
+            QString bin = QFileDialog::getOpenFileName(nullptr, "Select noteshirnk.py binary");
+            if (bin.isEmpty()) {
+                return false;
+            }
+            m_noteshrink_bin = bin;
+            m_settings.setValue("noteshrink-bin", m_noteshrink_bin);
+            m_settings.sync();
+            m_binary_found = true;
+        } else {
+            return false;
+        }
+    } else {
+        m_binary_found = true;
+    }
+
     // check if ImageMagick's 'convert' is available
     if (!ns_utils::binary_exec_p("convert")) {
         QMessageBox::information(nullptr, "Information",
@@ -704,6 +736,7 @@ void NoteshrinkDialog::check_prereq()
     } else {
         m_preproc_available = true;
     }
+    return true;
 }
 
 

@@ -45,3 +45,7 @@ Recommended host for building: (k)ubuntu 16.04 _xenial_.
 ### (K)ubuntu 18.04 notes
 
 Install `qt5-default` (`qmake` will go to `qmake-qt5`)
+
+### Icons
+
+From 'White chips heavy' icon theme.
