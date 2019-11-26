@@ -8,21 +8,21 @@
 namespace ns_utils
 {
 
-bool binary_exec_p(const QString &command)
+bool binary_exec_p(const QString &command, int kill_timeout)
 {
     QProcess program;
     program.start(command);
     bool started = program.waitForStarted();
-    if (!program.waitForFinished(2000)) // 2 Second timeout
+    if (!program.waitForFinished(kill_timeout))
         program.kill();
     return started;
 }
 
 
-bool exec_cmd(const QString &command, QString &error_output, int interval,
-              std::function<void(QProcess&)> f)
+ExecResult exec_cmd(const QString &command, QString &error_output, int interval,
+                    std::function<void(QProcess&)> f)
 {
-    bool rc = false;
+    ExecResult rc = kExecNotStarted;
     QProcess program;
     program.start(command);
     std::cout << "Executing command: " << command.toStdString() << std::endl;
@@ -34,10 +34,10 @@ bool exec_cmd(const QString &command, QString &error_output, int interval,
             if (program.state() == QProcess::NotRunning) {
                 std::cout << "status: " << program.exitStatus() << ", code: " << program.exitCode() << std::endl;
                 if (program.exitStatus() == QProcess::NormalExit && program.exitCode() == 0) {
-                    rc = true;
+                    rc = kExecExitOk;
                     break;
                 } else {
-                    rc = false;
+                    rc = kExecExitError;
                     QByteArray output_bin;
                     output_bin = program.readAllStandardError();
                     error_output = QString(output_bin);
@@ -51,8 +51,6 @@ bool exec_cmd(const QString &command, QString &error_output, int interval,
                 }
             }
         }
-    } else {
-        rc = false;
     }
     return rc;
 }

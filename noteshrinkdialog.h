@@ -32,7 +32,7 @@ public:
 
     bool init_ok() const
     {
-        return (m_temp_dir != nullptr && m_binary_found);
+        return (m_temp_dir != nullptr && m_noteshrink_bin_found);
     }
 
 private slots:
@@ -122,7 +122,7 @@ private:
 
     QString m_noteshrink_bin;
 
-    bool m_binary_found;
+    bool m_noteshrink_bin_found;
 };
 
 #endif // NOTESHRINKDIALOG_H

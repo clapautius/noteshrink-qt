@@ -1,2 +1,2 @@
-* proper tmp files
+* use case: noteshrink.py path changes or the binary dissapears (handle kExecNotStarted value)
 * check pngcrush / pngquant before running cmd
