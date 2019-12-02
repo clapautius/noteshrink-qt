@@ -20,7 +20,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NoteshrinkDialog),
     m_preproc_available(false), m_temp_dir(nullptr),
-    m_noteshrink_bin_found(false)
+    m_noteshrink_bin_found(false), m_abort(false)
 {
     ui->setupUi(this);
     m_preview_files_model = new QStringListModel();
@@ -61,12 +61,18 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     for (QWidget *w : {(QWidget*)ui->m_crop_top, (QWidget*)ui->m_crop_left,
                        (QWidget*)ui->m_crop_bottom, (QWidget*)ui->m_crop_right,
                        (QWidget*)ui->m_resize, (QWidget*)ui->m_crop_label,
-                       (QWidget*)ui->m_resize_label}) {
+                       (QWidget*)ui->m_normalize,
+                       (QWidget*)ui->m_resize_label, (QWidget*)ui->m_separator_label}) {
         m_preproc_inputs.push_back(w);
     }
 
+    if (!check_prereq_stage1()) {
+        m_abort = true;
+    }
     restore_settings();
-    check_prereq();
+    if (!check_prereq_stage2()) {
+        m_abort = true;
+    }
     if (m_preproc_available) {
         m_inputs.push_back((QWidget*)ui->m_preproc_check);
     }
@@ -488,7 +494,7 @@ void NoteshrinkDialog::run_preview()
 
 QString NoteshrinkDialog::compose_convert_cmd(
         const QString &src, const QString &dst,
-        int crop_left, int crop_top, int crop_right, int crop_bottom, int resize)
+        int crop_left, int crop_top, int crop_right, int crop_bottom, int resize, bool normalize)
 {
     QString cmd = m_convert_path + " ";
     int orig_width = 0, orig_height = 0;
@@ -509,11 +515,13 @@ QString NoteshrinkDialog::compose_convert_cmd(
     cmd += QString::number(new_width) + "x" + QString::number(new_height) + "+" +
             QString::number(crop_top) + "+" + QString::number(crop_left) + " ";
     cmd += " +repage ";
-
     if (resize > 0) {
         cmd += " -resize ";
         cmd += QString::number(resize);
         cmd += "% ";
+    }
+    if (normalize) {
+        cmd += " -normalize ";
     }
     cmd += dst;
     return cmd;
@@ -533,7 +541,8 @@ bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, co
     disable_inputs();
 
     cmd = compose_convert_cmd(src, dst,
-                              crop_left, crop_top, crop_right, crop_bottom, ui->m_resize->value());
+                              crop_left, crop_top, crop_right, crop_bottom, ui->m_resize->value(),
+                              ui->m_normalize->isChecked());
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
     QCoreApplication::processEvents();
@@ -576,7 +585,8 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
 
     for(auto &f : m_input_files) {
         dst = f + "-preproc.png";
-        cmd = compose_convert_cmd(f, dst, crop_left, crop_top, crop_right, crop_bottom, ui->m_resize->value());
+        cmd = compose_convert_cmd(f, dst, crop_left, crop_top, crop_right, crop_bottom,
+                                  ui->m_resize->value(), ui->m_normalize->isChecked());
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
         ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
         QCoreApplication::processEvents();
@@ -639,6 +649,7 @@ void NoteshrinkDialog::save_settings()
     m_settings.setValue("preproc-crop-right", ui->m_crop_right->value());
     m_settings.setValue("preproc-crop-bottom", ui->m_crop_bottom->value());
     m_settings.setValue("preproc-resize", ui->m_resize->value());
+    m_settings.setValue("preproc-normalize", ui->m_normalize->isChecked());
     m_settings.setValue("bkg-value-threshold", ui->m_bkg_value_thres->value());
     m_settings.setValue("pixels-to-sample", ui->m_pixels_sample->value());
     m_settings.setValue("no-of-colors", ui->m_num_colors->value());
@@ -658,24 +669,30 @@ void NoteshrinkDialog::save_settings()
 void NoteshrinkDialog::restore_settings()
 {
     std::cout << __PRETTY_FUNCTION__ << std::endl;
-    if (m_settings.contains("preproc-on")) {
-        std::cout << "found preproc-on param, value is " << m_settings.value("preproc-on").toBool() << std::endl;
-        ui->m_preproc_check->setChecked(m_settings.value("preproc-on").toBool());
-    }
-    if (m_settings.contains("preproc-crop-left")) {
-        ui->m_crop_left->setValue(m_settings.value("preproc-crop-left").toInt());
-    }
-    if (m_settings.contains("preproc-crop-top")) {
-        ui->m_crop_top->setValue(m_settings.value("preproc-crop-top").toInt());
-    }
-    if (m_settings.contains("preproc-crop-right")) {
-        ui->m_crop_right->setValue(m_settings.value("preproc-crop-right").toInt());
-    }
-    if (m_settings.contains("preproc-crop-bottom")) {
-        ui->m_crop_bottom->setValue(m_settings.value("preproc-crop-bottom").toInt());
-    }
-    if (m_settings.contains("preproc-resize")) {
-        ui->m_resize->setValue(m_settings.value("preproc-resize").toInt());
+    if (m_preproc_available) {
+        if (m_settings.contains("preproc-on")) {
+            std::cout << "found preproc-on param, value is " << m_settings.value("preproc-on").toBool() << std::endl;
+            ui->m_preproc_check->setChecked(m_settings.value("preproc-on").toBool());
+            ui->m_separator_label->setEnabled(m_settings.value("preproc-on").toBool());
+        }
+        if (m_settings.contains("preproc-crop-left")) {
+            ui->m_crop_left->setValue(m_settings.value("preproc-crop-left").toInt());
+        }
+        if (m_settings.contains("preproc-crop-top")) {
+            ui->m_crop_top->setValue(m_settings.value("preproc-crop-top").toInt());
+        }
+        if (m_settings.contains("preproc-crop-right")) {
+            ui->m_crop_right->setValue(m_settings.value("preproc-crop-right").toInt());
+        }
+        if (m_settings.contains("preproc-crop-bottom")) {
+            ui->m_crop_bottom->setValue(m_settings.value("preproc-crop-bottom").toInt());
+        }
+        if (m_settings.contains("preproc-resize")) {
+            ui->m_resize->setValue(m_settings.value("preproc-resize").toInt());
+        }
+        if (m_settings.contains("preproc-normalize")) {
+            ui->m_normalize->setChecked(m_settings.value("preproc-normalize").toBool());
+        }
     }
     if (m_settings.contains("bkg-value-threshold")) {
         ui->m_bkg_value_thres->setValue(m_settings.value("bkg-value-threshold").toInt());
@@ -710,12 +727,35 @@ void NoteshrinkDialog::restore_settings()
     }
 }
 
+
 /**
   * Check prerequisites (binaries for conversion, etc.).
   *
   * @return false if we should abort
   */
-bool NoteshrinkDialog::check_prereq()
+bool NoteshrinkDialog::check_prereq_stage1()
+{
+    // check if ImageMagick's 'convert' is available
+    if (!ns_utils::binary_exec_p(m_convert_path)) {
+        static const QString convert_not_found_msg = "Pre-processig not available. ImageMagick's \"convert\" app. not found.";
+        log_message(convert_not_found_msg);
+        m_preproc_available = false;
+        ui->m_preproc_check->setChecked(false);
+        ui->m_preproc_check->setToolTip(convert_not_found_msg);
+        disable_preproc_inputs();
+    } else {
+        m_preproc_available = true;
+    }
+    return true;
+}
+
+
+/**
+  * Check prerequisites (binaries for conversion, etc.).
+  *
+  * @return false if we should abort
+  */
+bool NoteshrinkDialog::check_prereq_stage2()
 {
     // if first run - check if noteshrink.py binary is available
     if (m_noteshrink_bin.isEmpty()) {
@@ -751,17 +791,6 @@ bool NoteshrinkDialog::check_prereq()
         m_noteshrink_bin_found = true;
     }
 
-    // check if ImageMagick's 'convert' is available
-    if (!ns_utils::binary_exec_p(m_convert_path)) {
-        static const QString convert_not_found_msg = "Pre-processig not available. ImageMagick's \"convert\" app. not found.";
-        log_message(convert_not_found_msg);
-        m_preproc_available = false;
-        ui->m_preproc_check->setChecked(false);
-        ui->m_preproc_check->setToolTip(convert_not_found_msg);
-        disable_preproc_inputs();
-    } else {
-        m_preproc_available = true;
-    }
     return true;
 }
 

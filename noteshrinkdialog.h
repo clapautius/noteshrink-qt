@@ -32,7 +32,7 @@ public:
 
     bool init_ok() const
     {
-        return (m_temp_dir != nullptr && m_noteshrink_bin_found);
+        return (m_temp_dir != nullptr && m_noteshrink_bin_found && !m_abort);
     }
 
 private slots:
@@ -71,11 +71,21 @@ private:
 
     QString compose_convert_cmd(
             const QString &src, const QString &dst,
-            int crop_left, int crop_top, int crop_right, int crop_bottom, int resize);
+            int crop_left, int crop_top, int crop_right, int crop_bottom, int resize, bool normalize = false);
 
     QString compose_convert_cmd(const QStringList &sources);
 
-    bool check_prereq();
+    /**
+     * @brief Check prerequisites before loading settings.
+     * @return false if we should abort.
+     */
+    bool check_prereq_stage1();
+
+    /**
+     * @brief Check prerequisites after loading settings.
+     * @return false if we should abort.
+     */
+    bool check_prereq_stage2();
 
     void enable_inputs();
 
@@ -125,6 +135,8 @@ private:
     QString m_noteshrink_bin;
 
     bool m_noteshrink_bin_found;
+
+    bool m_abort;
 };
 
 #endif // NOTESHRINKDIALOG_H
