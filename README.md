@@ -5,7 +5,7 @@ GUI for noteshrink.py ( https://github.com/mzucker/noteshrink ).
 
 Features:
  * preview
- * pre-processing 
+ * pre-processing (requires ImageMagick's **convert** app.)
    * crop
    * resize
    * normalize colors (increase contrast)
