@@ -513,7 +513,7 @@ QString NoteshrinkDialog::compose_convert_cmd(
     int new_width = orig_width - crop_left - crop_right;
     int new_height = orig_height - crop_top - crop_bottom;
     cmd += QString::number(new_width) + "x" + QString::number(new_height) + "+" +
-            QString::number(crop_top) + "+" + QString::number(crop_left) + " ";
+            QString::number(crop_left) + "+" + QString::number(crop_top) + " ";
     cmd += " +repage ";
     if (resize > 0) {
         cmd += " -resize ";
