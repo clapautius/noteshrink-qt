@@ -12,6 +12,10 @@
 #include <QDir>
 #include <QProgressDialog>
 
+
+const QString NoteshrinkDialog::m_convert_path = "convert";
+
+
 NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NoteshrinkDialog),
@@ -52,7 +56,7 @@ NoteshrinkDialog::NoteshrinkDialog(QWidget *parent) :
         m_inputs.push_back(w);
     }
 
-    // put all input controls in a vector
+    // put all pre-proc controls in a vector
     // :fixme: get rid of the old-style cast
     for (QWidget *w : {(QWidget*)ui->m_crop_top, (QWidget*)ui->m_crop_left,
                        (QWidget*)ui->m_crop_bottom, (QWidget*)ui->m_crop_right,
@@ -433,8 +437,16 @@ void NoteshrinkDialog::set_default_values()
 void NoteshrinkDialog::on_m_preproc_check_stateChanged(int arg1)
 {
     if (arg1 == Qt::Checked) {
-        // :fixme: - check if 'convert' exists
-        enable_preproc_inputs();
+        if (m_preproc_available) {
+            enable_preproc_inputs();
+        } else {
+            QMessageBox::critical(nullptr, "Error",
+                                  "Pre-processig not available.<br>"
+                                  "<a href=\"https://imagemagick.org/\">ImageMagick</a>'s <b>convert</b> app. not found.<br>"
+                                  "Install it and make sure it can be executed!");
+            ui->m_preproc_check->setChecked(false);
+            ui->m_preproc_check->setEnabled(false);
+        }
     } else if (arg1 == Qt::Unchecked) {
         disable_preproc_inputs();
     }
@@ -478,7 +490,7 @@ QString NoteshrinkDialog::compose_convert_cmd(
         const QString &src, const QString &dst,
         int crop_left, int crop_top, int crop_right, int crop_bottom, int resize)
 {
-    QString cmd = "convert ";
+    QString cmd = m_convert_path + " ";
     int orig_width = 0, orig_height = 0;
 
     // get size of the original image
@@ -511,7 +523,7 @@ QString NoteshrinkDialog::compose_convert_cmd(
 bool NoteshrinkDialog::run_noteshrink_preproc_preview_cmd(const QString &src, const QString &dst)
 {
     bool rc = false;
-    QString cmd = "convert ";
+    QString cmd = m_convert_path + " ";
     int crop_top = 0, crop_left = 0, crop_right = 0, crop_bottom = 0;
     crop_top = ui->m_crop_top->value();
     crop_left = ui->m_crop_left->value();
@@ -740,11 +752,13 @@ bool NoteshrinkDialog::check_prereq()
     }
 
     // check if ImageMagick's 'convert' is available
-    if (!ns_utils::binary_exec_p("convert")) {
-        QMessageBox::information(nullptr, "Information",
-                                 "ImageMagick's \"convert\" application not found.\nPre-processing will not be available.");
+    if (!ns_utils::binary_exec_p(m_convert_path)) {
+        static const QString convert_not_found_msg = "Pre-processig not available. ImageMagick's \"convert\" app. not found.";
+        log_message(convert_not_found_msg);
         m_preproc_available = false;
-        ui->m_preproc_check->setEnabled(false);
+        ui->m_preproc_check->setChecked(false);
+        ui->m_preproc_check->setToolTip(convert_not_found_msg);
+        disable_preproc_inputs();
     } else {
         m_preproc_available = true;
     }

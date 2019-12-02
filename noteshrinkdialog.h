@@ -11,7 +11,7 @@
 #include <QSettings>
 #include <QTemporaryDir>
 
-#define NOTESHRINK_QT_VER "v8" // :release:
+#define NOTESHRINK_QT_VER "v9-beta" // :release:
 
 namespace Ui {
 class NoteshrinkDialog;
@@ -51,6 +51,8 @@ private slots:
     void aboutToQuit();
 
 private:
+
+    static const QString m_convert_path;
 
     void update_preview_image();
 
