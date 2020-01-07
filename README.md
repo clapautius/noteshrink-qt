@@ -21,13 +21,14 @@ Download
 AppImage (linux)
 ----------------
 
-**Latest release:** [noteshrink-qt-v9-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v9/noteshrink-qt-v9-linux-x86_64.AppImage)
+**Latest release:** [noteshrink-qt-v10-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v10/noteshrink-qt-v10-linux-x86_64.AppImage)
 
 -----
 
 Latest beta release: N/A
 
 Previous releases:
+ * [noteshrink-qt-v9-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v9/noteshrink-qt-v9-linux-x86_64.AppImage)
  * [noteshrink-qt-v8-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v8/noteshrink-qt-v8-linux-x86_64.AppImage)
  * [noteshrink-qt-v7-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v7/noteshrink-qt-v7-linux-x86_64.AppImage)
 
