@@ -11,7 +11,7 @@
 #include <QSettings>
 #include <QTemporaryDir>
 
-#define NOTESHRINK_QT_VER "v9" // :release:
+#define NOTESHRINK_QT_VER "v10" // :release:
 
 namespace Ui {
 class NoteshrinkDialog;

@@ -144,8 +144,9 @@ QString NoteshrinkDialog::compose_noteshrink_cmd(
         cmd += additional_params;
     }
     for(auto &f : sources) {
-        cmd += " ";
+        cmd += " \"";
         cmd += f;
+        cmd += "\" ";
     }
     return cmd;
 }
@@ -167,9 +168,9 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(
 
     QString extra_params;
     // output
-    extra_params = " -b ";
+    extra_params = " -b \"";
     extra_params += dst;
-    extra_params += " -c \"/bin/true\" ";
+    extra_params += "\" -c \"/bin/true\" ";
 
     cmd = compose_noteshrink_cmd(QStringList(src), extra_params);
 
@@ -300,9 +301,9 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd(QString &err_msg)
         } else if (current_file_no < total_files) {
             waiting.sprintf("page%04d.png", current_file_no);
         }
-        std::cout <<"Waiting for file: " << waiting.toStdString().c_str() << std::endl;
+        //std::cout <<"Waiting for file: " << waiting.toStdString().c_str() << std::endl; // :debug:
         if (!waiting.isEmpty() && QFile::exists(waiting)) {
-            std::cout << "Detected file: " << waiting.toStdString().c_str() << std::endl;
+            //std::cout << "Detected file: " << waiting.toStdString().c_str() << std::endl; // :debug:
             if (current_file_no <= total_files + 2) {
                 std::cout << "Increment current value: " << progress.value() << std::endl;
                 progress.setValue(progress.value() + 1);
@@ -507,7 +508,7 @@ QString NoteshrinkDialog::compose_convert_cmd(
     }
 
     // convert syntax: WxH+Xoff+Yoff
-    cmd += src;
+    cmd += "\"" + src + "\"";
     cmd += " -strip "; // get rid of EXIF that can make noteshrink.py crash sometimes
     cmd += " -crop ";
     int new_width = orig_width - crop_left - crop_right;
@@ -584,7 +585,7 @@ bool NoteshrinkDialog::run_noteshrink_preproc_full_cmd()
     progress.setCancelButton(nullptr);
 
     for(auto &f : m_input_files) {
-        dst = f + "-preproc.png";
+        dst = "\"" + f + "-preproc.png\"";
         cmd = compose_convert_cmd(f, dst, crop_left, crop_top, crop_right, crop_bottom,
                                   ui->m_resize->value(), ui->m_normalize->isChecked());
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
