@@ -25,7 +25,7 @@ AppImage (linux)
 
 -----
 
-Latest beta release: N/A
+Latest beta release: [noteshrink-qt-v11-beta-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v11-beta/noteshrink-qt-v11-beta-linux-x86_64.AppImage)
 
 Previous releases:
  * [noteshrink-qt-v9-linux-x86_64.AppImage](https://github.com/clapautius/noteshrink-qt/releases/download/v9/noteshrink-qt-v9-linux-x86_64.AppImage)
