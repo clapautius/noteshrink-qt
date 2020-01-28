@@ -20,7 +20,8 @@ bool binary_exec_p(const QString &command, int kill_timeout)
 
 
 ExecResult exec_cmd(const QString &command, QString &error_output, int interval,
-                    std::function<void(QProcess&)> f)
+                    std::function<void(QProcess&)> f,
+                    std::function<bool(void)> cancel_p)
 {
     ExecResult rc = kExecNotStarted;
     QProcess program;
@@ -37,11 +38,16 @@ ExecResult exec_cmd(const QString &command, QString &error_output, int interval,
                     rc = kExecExitOk;
                     break;
                 } else {
-                    rc = kExecExitError;
-                    QByteArray output_bin;
-                    output_bin = program.readAllStandardError();
-                    error_output = QString(output_bin);
-                    break;
+                    if (cancel_p && cancel_p()) {
+                        rc = kExecExitAborted;
+                        break;
+                    } else {
+                        rc = kExecExitError;
+                        QByteArray output_bin;
+                        output_bin = program.readAllStandardError();
+                        error_output = QString(output_bin);
+                        break;
+                    }
                 }
             } else {
                 // update progress
@@ -49,6 +55,10 @@ ExecResult exec_cmd(const QString &command, QString &error_output, int interval,
                 if (f != nullptr) {
                     f(program);
                 }
+            }
+            if (cancel_p && cancel_p()) {
+                std::cout << "trying to terminate noteshrink.py process" << std::endl;
+                program.terminate();
             }
         }
     }

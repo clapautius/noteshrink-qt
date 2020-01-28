@@ -177,15 +177,18 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(
     ui->m_log_window->appendHtml("<div style=\"color: green;\">Running command:</div>");
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
-    QProgressDialog progress("Shrinking notes ...", "", 0, 0, this, Qt::Dialog);
+    QProgressDialog progress("Shrinking notes ...", "Cancel", 0, 0, this, Qt::Dialog);
     progress.setMinimumDuration(0);
     progress.setValue(0);
     progress.setWindowModality(Qt::WindowModal);
-    progress.setCancelButton(nullptr);
+    //progress.setCancelButton(nullptr);
 
     QCoreApplication::processEvents();
     QString error_msg;
-    if (ns_utils::exec_cmd(cmd, error_msg) == ns_utils::kExecExitOk) {
+    ns_utils::ExecResult cc = ns_utils::exec_cmd(
+      cmd, error_msg, 100, nullptr,
+      [&](){return progress.wasCanceled();});
+    if (cc == ns_utils::kExecExitOk) {
         update_preview_image();
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
 
@@ -209,6 +212,9 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(
         QFileInfo orig_file(orig);
         ui->m_preview_label->setText(orig_file.fileName() + " (" + QString::number(size) + "K)");
         rc = true;
+    } else if (cc == ns_utils::kExecExitAborted) {
+        rc = true;
+        ui->m_log_window->appendHtml("<div style=\"color: red;\">Aborted</div>");
     } else {
         rc = false;
         ui->m_log_window->appendHtml("<div style=\"color: red;\">Error:</div>");
@@ -284,11 +290,11 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd(QString &err_msg)
     ui->m_log_window->appendHtml("<div style=\"color: blue;\">" + cmd + "</div>");
 
     int total_files = m_input_files.size();
-    QProgressDialog progress("Shrinking notes ...", "", 0, total_files + 2, this, Qt::Dialog);
+    QProgressDialog progress("Shrinking notes ...", "Cancel", 0, total_files + 2, this, Qt::Dialog);
     progress.setMinimumDuration(0);
     progress.setValue(1);
     progress.setWindowModality(Qt::WindowModal);
-    progress.setCancelButton(nullptr);
+//    progress.setCancelButton(nullptr);
 
     QCoreApplication::processEvents();
     QString error_msg;
@@ -311,9 +317,15 @@ bool NoteshrinkDialog::run_noteshrink_full_cmd(QString &err_msg)
             current_file_no++;
         }
     };
-    if (ns_utils::exec_cmd(cmd, error_msg, 100, update_func) == ns_utils::kExecExitOk) {
+    ns_utils::ExecResult cc = ns_utils::exec_cmd(
+      cmd, error_msg, 100, update_func,
+      [&](){return progress.wasCanceled();});
+    if (cc == ns_utils::kExecExitOk) {
         ui->m_log_window->appendHtml("<div style=\"color: green;\">Done</div>");
         rc = true;
+    } else if (cc == ns_utils::kExecExitAborted) {
+        rc = true;
+        ui->m_log_window->appendHtml("<div style=\"color: red;\">Aborted</div>");
     } else {
         ui->m_log_window->appendHtml("<div style=\"color: red;\">Error:</div>");
         ui->m_log_window->appendPlainText(error_msg);
