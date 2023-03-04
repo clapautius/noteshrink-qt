@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = noteshrink-qt
+TARGET = noteshrink-qt-c
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -30,10 +30,13 @@ SOURCES += \
 
 HEADERS += \
         noteshrinkdialog.h \
-    noteshrink_utils.h
+        noteshrink_utils.h \
+        noteshrink.h
 
 FORMS += \
         noteshrinkdialog.ui
+
+LIBS += -L. -lnoteshrink-c
 
 unix {
     target.path = $$PREFIX/bin

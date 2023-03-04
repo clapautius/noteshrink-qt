@@ -5,6 +5,8 @@
 #include <QProcess>
 #include <QCoreApplication>
 
+#include "noteshrink.h"
+
 namespace ns_utils
 {
 
@@ -65,5 +67,9 @@ ExecResult exec_cmd(const QString &command, QString &error_output, int interval,
     return rc;
 }
 
+bool process_img(const QString &input_image, const QString &output_image, QString &error_output)
+{
+    NSHOption o = NSHMakeDefaultOption();
+}
 
 }

@@ -34,6 +34,11 @@ ExecResult exec_cmd(const QString &command, QString &error_output, int interval 
                     std::function<void(QProcess&)> f = nullptr,
                     std::function<bool(void)> cancel_p = nullptr);
 
+/**
+ * @brief Process image using noteshrink-c library.
+ */
+bool process_img(const QString &input_image, const QString &output_image, QString &error_output);
+
 }
 
 #endif // NOTESHRINK_UTILS_H
