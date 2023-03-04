@@ -11,7 +11,11 @@
 #include <QSettings>
 #include <QTemporaryDir>
 
-#define NOTESHRINK_QT_VER "v11-beta" // :release:
+#ifdef USE_NOTESHRINK_C
+#include "noteshrink.h"
+#endif
+
+#define NOTESHRINK_QT_VER "2.0-a" // :release:
 
 namespace Ui {
 class NoteshrinkDialog;
@@ -108,6 +112,10 @@ private:
     void log_message(const QString &msg, bool print_to_stdout = false);
 
     void toggle_log_window(QPushButton *toggle_button);
+
+#ifdef USE_NOTESHRINK_C
+    void fill_noteshrinkc_options(NSHOption &opts);
+#endif
 
     Ui::NoteshrinkDialog *ui;
 

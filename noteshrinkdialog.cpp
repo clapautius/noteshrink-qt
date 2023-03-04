@@ -12,6 +12,8 @@
 #include <QDir>
 #include <QProgressDialog>
 
+#include <stb/stb_image.h>
+#include <stb/stb_image_write.h>
 
 const QString NoteshrinkDialog::m_convert_path = "convert";
 
@@ -107,7 +109,11 @@ NoteshrinkDialog::~NoteshrinkDialog()
 
 void NoteshrinkDialog::update_preview_image()
 {
-    m_preview_image.load(m_preview_image_tmp_path);
+    ui->m_log_window->appendPlainText(QString("Loading preview image ") + m_preview_image_tmp_path);
+    if (!m_preview_image.load(m_preview_image_tmp_path)) {
+        ui->m_log_window->appendHtml("<div style=\"color: red;\">Error loading preview image</div>");
+        //QMessageBox::critical(nullptr, "Error", "Error loading preview image");
+    }
     ui->m_preview_area->setPixmap(QPixmap::fromImage(m_preview_image));
     ui->m_preview_area->setScaledContents(true);
     ui->m_preview_area->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
@@ -151,6 +157,164 @@ QString NoteshrinkDialog::compose_noteshrink_cmd(
     return cmd;
 }
 
+#ifdef USE_NOTESHRINK_C
+
+void NoteshrinkDialog::fill_noteshrinkc_options(NSHOption &opts)
+{
+    opts = NSHMakeDefaultOption();
+
+    // 'v' param
+    opts.BrightnessThreshold = ui->m_bkg_value_thres->value();
+
+    // 'p' param
+    opts.SampleFraction = ui->m_pixels_sample->value();
+
+    // 'n' param
+    opts.NumColors = ui->m_num_colors->value();
+
+    if (ui->m_bkg_white->isChecked()) {
+        opts.WhiteBackground = true;
+    }
+
+    // :fixme: global palette ?
+    //if (ui->m_global_palette->isChecked()) {
+
+    // :fixme: double check - saturate or do not saturate?
+    if (ui->m_do_not_saturate->isChecked()) {
+        opts.Saturate = false;
+    } else {
+        opts.Saturate = true;
+    }
+}
+
+
+static bool noteshrinkc_process(const char *filein, const char *fileout)
+{
+    int height, width, channels, mChannels, y, x, d;
+    size_t ki, kd;
+    unsigned char *data = NULL, *result = NULL;
+    float *palette = NULL;
+    stbi_uc *img = NULL;
+
+    int MinInt = 2;
+    float MinFloat = 0.001;
+    NSHOption o = NSHMakeDefaultOption();
+    int fquiet = 0;
+    int fhelp = 0;
+
+    printf("input: %s, output: %s\n", filein, fileout);
+    if (!(img = stbi_load(filein, &width, &height, &channels, STBI_rgb_alpha)))
+    {
+        fprintf(stderr, "ERROR: not read image: %s\n", filein);
+        return 5;
+    }
+    printf("image: %dx%d:%d\n", width, height, channels);
+    if (!(data = (unsigned char*)malloc(height * width * channels * sizeof(unsigned char))))
+    {
+        fprintf(stderr, "ERROR: not use memmory\n");
+        return 1;
+    }
+    ki = 0;
+    kd = 0;
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            for (d = 0; d < channels; d++)
+            {
+                data[kd + d] = (unsigned char)img[ki + d];
+            }
+            ki += STBI_rgb_alpha;
+            kd += channels;
+        }
+    }
+    stbi_image_free(img);
+
+
+    if (!(palette = (float*)malloc(o.NumColors * channels * sizeof(float))))
+    {
+        fprintf(stderr, "ERROR: not use memmory\n");
+        return 4;
+    }
+    if (!(result = (unsigned char*)malloc(height * width * sizeof(uint8_t))))
+    {
+        fprintf(stderr, "ERROR: not use memmory\n");
+        return 4;
+    }
+
+    NSHPaletteCreate(data, height, width, channels, o, palette, o.NumColors);
+    NSHPaletteApply(data, height, width, channels, palette, o.NumColors, o, result);
+    if (o.Saturate)
+    {
+        NSHPaletteSaturate(palette, o.NumColors, channels);
+    }
+    if (o.Norm)
+    {
+        NSHPaletteNorm(palette, o.NumColors, channels);
+    }
+    if (o.WhiteBackground)
+    {
+        for (d = 0; d < channels; d++)
+        {
+            palette[d] = 255.0f;
+        }
+    }
+    kd = 0;
+    for (ki = 0; ki < o.NumColors; ki++)
+    {
+        for (d = 0; d < channels; d++)
+        {
+            palette[kd] += 0.5f;
+            palette[kd] = (palette[kd] < 0) ? 0.0f : (palette[kd] < 255.0f) ? palette[kd] : 255.0f;
+            kd++;
+        }
+    }
+
+    ki = 0;
+    kd = 0;
+    mChannels = (channels < 3) ? channels : 3;
+    for (y = 0; y < height; y++)
+    {
+        for (x = 0; x < width; x++)
+        {
+            for (d = 0; d < mChannels; d++)
+            {
+                data[kd + d] = (unsigned char)palette[(int)result[ki] * channels + d];
+            }
+            kd += channels;
+            ki++;
+        }
+    }
+    if (!fquiet) printf("Save png: %s\n", fileout);
+    if (!(stbi_write_png(fileout, width, height, channels, data, width * channels)))
+    {
+        fprintf(stderr, "ERROR: not write image: %s\n", fileout);
+        return 5;
+    }
+    if (!fquiet) printf("done\n");
+    free(data);
+    free(result);
+    free(palette);
+
+}
+
+
+bool NoteshrinkDialog::run_noteshrink_preview_cmd(
+        const QString &orig, const QString &src, const QString &dst)
+{
+    bool rc = false;
+    disable_inputs();
+
+    NSHOption opts;
+    fill_noteshrinkc_options(opts);
+    noteshrinkc_process(src.toStdString().c_str(), dst.toStdString().c_str());
+
+    rc = true;
+    enable_inputs();
+    return rc;
+}
+
+#else
 
 bool NoteshrinkDialog::run_noteshrink_preview_cmd(
         const QString &orig, const QString &src, const QString &dst)
@@ -225,6 +389,7 @@ bool NoteshrinkDialog::run_noteshrink_preview_cmd(
     return rc;
 }
 
+#endif
 
 bool NoteshrinkDialog::clean_up_old_files()
 {
@@ -480,8 +645,13 @@ void NoteshrinkDialog::run_preview()
         QMessageBox::information(nullptr, "Error", "No image selected for preview");
         return;
     }
+#ifdef USE_NOTESHRINK_C
+    dst = m_preview_image_tmp_path;
+    src = m_preview_image_src_path;
+#else
     dst = m_preview_image_tmp_path.left(m_preview_image_tmp_path.size() - 8);
     src = m_preview_image_src_path;
+#endif
     QString orig = src;
     if (ui->m_preproc_check->isChecked()) {
         src = m_preview_image_src_path;
