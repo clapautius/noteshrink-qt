@@ -1,2 +1,3 @@
 * use case: noteshrink.py path changes or the binary dissapears (handle kExecNotStarted value)
 * check pngcrush / pngquant before running cmd
+* if only 'Do not saturate colors' is on, there an error (rename error)
